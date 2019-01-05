@@ -1,0 +1,14 @@
+
+{
+    "popup.order": "You are about to order ",
+    "popup.cancel.insufficient": "Do you want to mark this reagent as insufficient?",
+    "popup.cancel.replenish": "Do you want to mark this reagent as replenished and in sufficient quantities?",
+    "popup.reagent": "Reagent",
+    "popup.vendor": "Vendor",
+    "popup.catalog": "Catalog Number",
+    "popup.owner": "Owner",
+    "popup.requestor": "Requestor",
+    "popup.lab": "Lab",
+    "popup.fulfill.order": "Have you fulfilled this order?",
+    "popup.fulfill.revert" : "Do you want to revert this order fulfillment?"
+}

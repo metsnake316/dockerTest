@@ -1,0 +1,14 @@
+
+{
+    "popup.order": "Vous êtes sur le point de commander ",
+    "popup.cancel.insufficient": "Voulez-vous marquer ce réactif comme insuffisant?",
+    "popup.cancel.replenish": "Voulez-vous marquer ce réactif comme réapprovisioné et en quantité suffisante?",
+    "popup.reagent": "Réactif",
+    "popup.vendor": "Vendeur",
+    "popup.catalog": "Numéro de Catalogue",
+    "popup.owner": "Proprio",
+    "popup.requestor": "Demandeur",
+    "popup.lab": "Labo",
+    "popup.fulfill.order": "Avez-vous rempli cette commande de réactif?",
+    "popup.fulfill.revert" : "Voulez-vous marquer cette commande de réactif comme non-remplie?"
+}
