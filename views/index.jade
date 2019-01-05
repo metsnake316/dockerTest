@@ -1,0 +1,143 @@
+extends layout
+
+block content
+    if(matches!=null && matches.length > 0)
+      #matches
+         - now = (new Date(now))
+         div.col-xs-12(class="uppercase" style="display:none;")= moment(matches[0].datum).tz("America/New_York").format('dddd, MMMM Do, YYYY')
+       div
+         div
+            - now = (new Date(now))
+            - count = 0
+            - predicted = false
+            - predictedteam = ''
+            - scoretyp = ''
+            - scorehemma = ''
+            - background = 'background:rgba(0, 0, 0, 0);'
+            - flagtyp = ''
+            - flaghemma = ''
+            - each match in matches
+               - matchdate = (new Date(match.datum))
+               - predicted = false
+               - scoretyp = ''
+               - scorehemma = ''
+               - background = 'background:rgba(0, 0, 0, 0);'
+               - flagtyp = "/images/" + match.typ + "_flag.png"
+               - flaghemma = "/images/" + match.hemma + "_flag.png"
+               - betpoints = 0
+               - count++
+               - if(betsMade != null)
+                  - each bet in betsMade
+                     - if(bet.bet == match.bet)
+                        - predicted = true
+                        - predictedteam = bet.predictedteam
+                        - background = 'background-color:#DCDDD9'
+                        - scoretyp = bet.scoretyp
+                        - scorehemma = bet.scorehemma
+                        - betpoints = bet.points
+
+                  div(id="ctl00_Div2" style=""+background class="container patchycontainer").match
+                     div.row
+                       div(class="col-xs-12 patchyrow")
+                        - if(bet)
+                           span(class="test")!= bet.scorehemma
+                        img(src=flagtyp alt=""  class="hidden-xs")
+                        span.patchyteam!= match.typ + '  '
+                        input(id="typ" + match.bet name="typ"+match.bet value=scoretyp type="number" placeholder="_" class="input-lg form-control score patchyinput" maxlength="1" onchange="javascript:$(this).parent().parent().find('.scoretyp').val($(this).val())")
+                        span.versuspatch!= 'v'
+                        input(id="hemma" + match.bet name="hemma" + match.bet value=scorehemma type="number" placeholder="_" class="input-lg form-control  score patchyinput" maxlength="1" onchange="javascript:$(this).parent().parent().find('.scorehemma').val($(this).val())")
+                        span.patchyteam!= '  ' + match.hemma
+                        img(src=flaghemma alt=""  class="hidden-xs")
+                        fieldset
+                        p
+                           if(match.grupp != 'X')
+                              div.group!= '<b>Group:</b> ' + match.grupp
+                           div.date!= '<b>Date:</b> ' + moment(match.datum).format('LLL')
+                           if(match.resultat != null && match.resultat != '')
+                              div.results!= 'This game has ended and the result is <b>' + match.resultat + '</b>.'
+                              if(predicted && betpoints != null)
+                                 div.points!= 'You have earned <b>' + betpoints + '</b> points.'
+
+                           if predicted && !placesuccess && !placeerror
+                              if predictedteam != 'none'
+                                 div.prediction!= '<br/>You have predicted <b>' + predictedteam + '</b> as the winner! '
+                              else
+                                 div.prediction!= '<br/>Gonna be a <b>tie</b>?! '
+               
+                        if placesuccess == count
+                           div(class="alert alert-info")!= successmessage
+                        if placeerror == count
+                           div(class="alert alert-danger")!= message
+               
+                        div
+                        form(method="post" id="predict")
+                           input(name="position" class="position" id="position" type="hidden" value=count)
+                           input(name="typ" class="typ" id="typ" type="hidden" value=match.typ)
+                           input(name="hemma" class="hemma" id="hemma" type="hidden" value=match.hemma)
+                           input(name="scoretyp" class="scoretyp" id="scoretyp" type="hidden" value=scoretyp)
+                           input(name="scorehemma" class="scorehemma" id="scorehemma" type="hidden" value=scorehemma)
+                           input(name="bet" class="bet" id="bet" type="hidden" value=match.bet)
+                           if moment(matchdate).diff(moment(now)) >= 0
+                              button.btn.btn-primary.btn-lg.btn-block.center-block.predictBtn(type='submit') Predict!
+                           else
+                              button.btn.btn-primary.btn-lg.btn-block.center-block(type='submit', disabled='disabled') Can't do!
+ 
+    else if state == 'rest'
+       div(style="padding-left: 20px; min-height:100%")
+          div(id="" style="padding:0px 10px 10px 10px;background:rgba(0, 0, 0, 0);border:none;margin:20px; width:auto" class="container").match
+             h1!= title
+             p!= "Today is a rest day. There are no matches. However you can always: <br/><span style='text-align:center'>Make your predictions with the <a href='/calendar'  style='font-weight:bold'>Calendar</a></span><br/><span style='text-align:center'>Check <a href='/ranking' style='font-weight:bold'>Your Ranking</a>!</span><br/><br/>And here are our three <b>leaders</b>:"                       
+             div(id="ctl00_Div2" style="padding-top:20px; width:95%" class="row rank").match  
+                div(class="table-responsive")       
+                  table(id="rankTbl" class="table")
+                     tbody
+                       - i=0
+                       - each rank in ranking
+                        - i++
+                        - netlighterid = rank.id
+                        - className = ""
+                        - if (i == 1  || i == 2 || i == 3)
+                           - if (i == 1)
+                              - className = "info boldify"
+                           - if (i == 3 || i == 2)
+                              - className = "active"
+                           - if(netlighterid == userid)
+                              - className = +" boldify"
+                           - participantName = netlighterid.split('@')
+                           tr(class=className id=participantName[0])
+                              td= i
+                              td!= rank.first_name + ' ' + rank.name  + ' [' +participantName[0] + ']'
+                              td= rank.totalpoints + " pt"
+                      
+    else if state == 'notstarted'
+       div(style="padding-left: 0px; min-height:100%")
+          div(id="ctl00_Div2" style="padding:0px;background:rgba(0, 0, 0, 0);border:none;margin:20px; width:auto" class="container").match
+             h1!= title
+             p!= "The World Cup in Brazil has not started yet! <br/>Please come back on <span style='color:red; font-weight:bold'>" + moment(startdate).format('LL') + "</span> and make your predictions!!"              
+    else if state == 'ended'
+       div(style="padding-left: 20px; min-height:100%")
+          div(id="" style="padding:0px 10px 10px 10px;background:rgba(0, 0, 0, 0);border:none;margin:20px; width:auto" class="container").match
+             h1!= title
+             p!= "Thank <span style='font-weight:bold; color:#36185F'>YOU</span> for participating in this epic event! <br/>Make sure to check the <a href='/ranking'> ranking results</a> before you log out! We had so much fun playing together :) <br/>Wondering who our three <span style='font-weight:bold; color:#36185F'>WINNERS</span> are? Look no further...<br/>"              
+             div(id="ctl00_Div2" style="padding-top:20px; width:95%" class="row rank").match  
+                div(class="table-responsive")       
+                  table(id="rankTbl" class="table")
+                     tbody
+                       - i=0
+                       - each rank in ranking
+                        - i++
+                        - netlighterid = rank.id
+                        - className = ""
+                        - if (i == 1  || i == 2 || i == 3)
+                           - if (i == 1)
+                              - className = "info boldify"
+                           - if (i == 3 || i == 2)
+                              - className = "active"
+                           - if(netlighterid == userid)
+                              - className += " boldify"
+                           - participantName = netlighterid.split('@')
+                           tr(class=className id=participantName[0])
+                              td= i
+                              td!= rank.first_name + ' ' + rank.name  + ' [' +participantName[0] + ']'
+                              td= rank.totalpoints + " pt"
+          

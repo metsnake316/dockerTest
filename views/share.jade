@@ -1,0 +1,294 @@
+extends layout
+
+block content
+	if !doing
+	- var fadesections = ""
+	- var hidefadesections = ""
+	- var uploadtext = ""
+	- var slide = "moveFromLeft"
+	- if(doing == "upload")
+		- slide = ""
+		- fadesections = "fadesections"
+		- hidefadesections = "hidefadesections"
+		- uploadtext = "uploadtext"
+	- var adjust = "adjustpadding"
+	- var filteroutput2 = report_sharesbycategory.filter(function(x){console.log("filter2: " + x.insuff); return (x.insuff == 1)});
+	div(id="langText", class="displaynone")!= lang
+	div(id="ios-light")
+		center
+			h1= i18n.__("shares.pop.title")
+			p(id="orderText")
+			div!= i18n.__("shares.pop.subtitle")
+	div(class="shade" id="shade")
+	div(class="shade-light" id="shade-light")
+	div(class="zoomnow container login marginbottom margintop container2 botbottom " + slide)
+		div(class="share-container " + fadesections + " float-left")
+			h1
+				span(class="fa fa-exchange lightyokecolor")
+				span!= i18n.__("shares.title")
+				span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+			if(myshares == "")
+				h4= i18n.__("shares.non.title")
+				p!= i18n.__("shares.non.subtitle")
+				div(class="searchlogo margintop-50")
+					span(class="fa fa-cubes shares-cubes")
+			if(mysharesrequest != null && mysharesrequest.length>0)
+				- var output = mysharesrequest.filter(function(x){return x.status!="fulfilled" && x.insufficient!=0});
+				h4= i18n.__("shares.subtitle1")
+				p
+					- var requestIntro = output.length + i18n.__("shares.intro5") + " <span class='isnewcolor fa fa-square'></span>"
+					- if(output.length == 0)
+						- requestIntro = i18n.__("shares.intro")
+					span!= requestIntro
+					span= i18n.__("shares.intro1")
+					- var totalrequestIntro = mysharesrequest.length + i18n.__("shares.intro2")
+					- if(mysharesrequest.length == 0)
+						- totalrequestIntro = i18n.__("shares.intro3")
+					span!= totalrequestIntro + i18n.__("shares.intro4")
+				div(id="results2", class="resultsshadow")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")
+							- var animatetable=" animated fadeIn"           
+							table(id="rankTblreqshares" class="table rankTbl"+animatetable)
+								thead
+									tr(class="you info-best font-bold")
+										th(class="displaynone")!="pos"
+										th(class="wrapped")!= i18n.__("shares.table.reagent")
+										th(class="desktabonly")= i18n.__("shares.table.vendor")
+										th(class="deskfullonly")= i18n.__("shares.table.catalog")
+										th(class="")= i18n.__("shares.table.requestor")
+										th= i18n.__("shares.table.date")
+										th(data-toggle="tooltip", title=i18n.__("admins.table.header.cancelorder"))= i18n.__("shares.table.delete")
+								tbody
+									-var ob = mysharesrequest
+									-for(var prop in ob)
+										- var canc = i18n.__("admins.table.x") + ob[prop].agent
+										- var n = ob[prop].status
+										- var d = new Date(ob[prop].date)
+										- d = d.toLocaleDateString("en-US")
+										- var isnew = ""
+										- var checkedstr = false
+										- if(n != "fulfilled")
+											- isnew = "isnew"
+										- var insuff = parseInt(ob[prop].insufficient)
+										- if(insuff == 0)
+											- isnew = "backColorinsuff"
+											- checkedstr = true
+											- canc = i18n.__("admins.table.repl") + ob[prop].agent
+										- var lab = (ob[prop].lab).replace(" ","").toLowerCase();
+										- var c = "cancel" + prop
+										- var status = ob[prop].status
+										- var showcancel = ""
+										- if(status == 'fulfilled')
+											- showcancel = " displaynone"
+										
+										tr(class=isnew, data-pos=prop)
+											td(class="displaynone") #{prop}
+											td(class="wrapped2") #{ob[prop].agent}
+											td(class="wrapped2 desktabonly") #{ob[prop].vendor}
+											td(class="wrapped2 deskfullonly") #{ob[prop].catalognumber}
+											td(class="wrapped2") #{ob[prop].requestoremail}
+											td #{d}
+											td(class="shares-cancel textalign-center-all", title=canc)
+												form(action="/cancelshare" method="post")
+													div(class="checkboxThree1" + showcancel)
+														input(type="checkbox" id=c name="cancel" value="cancel" class="cancel shares-input-cancel" checked=(checkedstr===true ? "checked" : undefined))
+														label(class="labelcheck1 shadow" for=c)
+													input(type="hidden" class="agentid" name="agent" value=ob[prop].agent)
+													input(type="hidden" class="labid" name="lab" value=ob[prop].lab)
+													input(type="hidden" class="vendorid" name="vendor" value=ob[prop].vendor)
+													input(type="hidden"  class="catalogid" name="catalognumber" value=ob[prop].catalognumber)
+													input(type="hidden" class="owneremailid" name="email" value=ob[prop].email)
+													input(type="hidden" class="requestorid" name="requestoremail" value=ob[prop].requestoremail)
+													input(type="hidden" class="selfid" name="self" value="self")
+													input(type="hidden" name="date" value=d)
+													input(type="hidden" name="table" value=currentlabname.replace(" ","").toLowerCase() + "_orders")
+													input(type="hidden" name="pos" value=prop)
+				div(class="threepointssep")
+			if(myshares != "")
+				h4(class="paddingtop-25")= i18n.__("shares.none.title")
+				p!= i18n.__("shares.none.subtitle")
+				div(id="results2", class="resultsshadow")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")
+							- var animatetable2=" animated fadeIn"              
+							table(id="rankTblshares" class="table rankTbl"+animatetable2)
+								thead
+									tr(class="you info-best font-bold")
+										th(class="displaynone")!="pos"
+										th(class="wrapped")!= i18n.__("shares.table.reagent")
+										th= i18n.__("shares.table.vendor")
+										th= i18n.__("shares.table.catalog")
+										th(data-toggle="tooltip",title=i18n.__("admins.table.header.insuff"))= i18n.__("shares.table.delete")
+								tbody
+									-var ob = myshares
+									-for(var prop in ob)
+										- var currentqtyint = parseInt(ob[prop].currentquantity)
+										- var qtyinsufficient = ""
+										- var checkedstr = false
+										- var d = new Date(ob[prop].date)
+										- d = d.toLocaleDateString("en-US")
+										- var insuff = parseInt(ob[prop].insufficient)
+										- var canc = ob[prop].agent + i18n.__("admins.table.insuff")
+										- if(insuff == 0)
+											- qtyinsufficient = "backColorinsuff"
+											- checkedstr = true
+											- canc = ob[prop].agent + i18n.__("admins.table.repl")
+										- var c = "cancelr" + prop
+										
+										tr(class=qtyinsufficient, data-pos=prop)
+											td(class="displaynone") #{prop}
+											td(class="wrapped2") #{ob[prop].agent}
+											td(class="wrapped2") #{ob[prop].vendor}
+											td(class="wrapped2") #{ob[prop].catalognumber}
+											td(class="shares-cancel textalign-center-all", title=canc)
+												form(action="/cancelshare" method="post")
+													div(class="checkboxThree1")
+														input(type="checkbox" id=c name="cancel" value="cancel" class="cancel shares-input-cancel" checked=(checkedstr===true ? "checked" : undefined))
+														label(class="labelcheck1 shadow" for=c)
+													input(type="hidden" class="agentid" name="agent" value=ob[prop].agent)
+													input(type="hidden" class="labid" name="lab" value=ob[prop].lab)
+													input(type="hidden" class="vendorid" name="vendor" value=ob[prop].vendor)
+													input(type="hidden" class="catalogid" name="catalognumber" value=ob[prop].catalognumber)
+													input(type="hidden" class="owneremailid" name="email" value=ob[prop].email)
+													input(type="hidden" name="date" value=d)
+													input(type="hidden" name="table" value="vm2016_agentsshare")
+													input(type="hidden" name="pos2" value=prop)
+		div(class="share-container " + adjust + " adjustpaddingrightandwidth " + fadesections + " float-right")
+			div(class="threepointssep mobileonly3 marginbottom-5")
+			script(type="text/javascript" src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js")
+
+			h3(class="paddingtop-43")
+				span(class="fa fa-bar-chart shares-chart")
+				span= i18n.__("shares.chart.title")
+			form(action="chartSelect", method="post")
+				div(class="buttons")
+					select(name="chartSelect" type="text" id="chartSelect" class="form-control shares-form" placeholder=i18n.__("shares.chart.select"))
+						option(value="chartNone",class="font-bold")=i18n.__("shares.chart.option1")
+						option(value="chartVenn" selected)= i18n.__("shares.chart.option2")
+						option(value="chartAll")= i18n.__("shares.chart.option3")
+						option(value="chartMonth")= i18n.__("shares.chart.option4")
+					span(class="fa fa-sort shares-sort")
+			div(id="chartNotes", class="displaynone")
+				p!= i18n.__("shares.chart.notes")
+			- var find0 = filteroutput2
+			- var now = new Date()
+			- var filteroutput = test.filter(function(x){console.log("x.monthorder: "+x.monthorder); console.log("x.yearorder: "+x.yearorder); console.log("now.getFullYear(): "+ now.getFullYear()); console.log("now.getMonth(): "+ now.getMonth()); console.log("so: "+ (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth())); return (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth() + 1)});
+
+			div(class="shares-bottom-sep")
+			div(id="sharesVenn", class="displaynone")
+				h4= i18n.__("shares.venn.title")
+				- if(report_venn != null && report_venn.length > 0)
+					p!=i18n.__("shares.venn.subtitle1")
+						span
+							img(src='/images/venn.png' width='16px' height='16px')
+						span= i18n.__("shares.venn.subtitle2")
+
+					div= i18n.__("shares.venn.desc")
+						input(id="search-field" type="search" class="shares-venn-field" placeholder=i18n.__("shares.venn.select"))
+						span(id="search-status" class="label label-success shares-status")
+					div(class="ct-chart5 ct-perfect-five shares-overflow")
+						div(id="vennChart" class="margin-auto")
+						- var array_labs_venn = " |"
+						- var array_catalogs_venn = " |"
+						- var ob = report_venn
+						- var venn = []
+						- var getlabs = []
+						- var labname = ""
+						- var seriesname = ""
+						- var seriesdata = []
+						- var vennportion = {name:'', data:[]}
+						- for(var prop in ob)
+							- getlabs.push(ob[prop].labname)
+						- for(var prop in ob)
+							- if(seriesname == '')
+								- seriesname = ob[prop].labname
+							- if(labname == '')
+								- labname = ob[prop].labname
+							- if (ob[prop].labname == labname && prop < (ob.length))
+								- seriesname = ob[prop].labname
+								- seriesdata.push(ob[prop].catalognumber)
+								- if(prop == (ob.length - 1))
+									- vennportion = {name:'', data:[]}
+									- vennportion.name = seriesname
+									- vennportion.data = seriesdata
+									- venn.push(vennportion)
+							- else
+								- vennportion.name = seriesname
+								- vennportion.data = seriesdata
+								- venn.push(vennportion)
+								- seriesdata = []
+								- seriesname = ob[prop].labname
+								- seriesdata.push(ob[prop].catalognumber)
+								- labname = ob[prop].labname
+								- vennportion = {name:'', data:[]}
+							- array_labs_venn = array_labs_venn + ob[prop].labname + "|"
+							- array_catalogs_venn = array_catalogs_venn + ob[prop].catalognumber + "|"
+
+						script.
+							var test = JSON.parse('#{JSON.stringify(venn)}'.replace(/&quot;/g, '"')), colorDefault = ["rgb(61,157,203)", "rgb(138,109,59)", "rgb(0,102,0)", "rgb(90,155,212)", "rgb(241,90,96)", "rgb(207,207,27)", "rgb(255,117,0)", "rgb(192,152,83)"], var_venn_chart_title1 = "#{i18n.__("shares.venn.chart.title1")}", var_venn_chart_title2 = "#{i18n.__("shares.venn.chart.title2")}", var_venn_chart_titlenone = "#{i18n.__("shares.venn.chart.titlenone")}";
+						script(type="text/javascript" src="/js/shares-venn-utils.js")
+
+
+					div(class="marginleft-20per")
+						div(id="tooltipsvenn-container")
+							div(id="tooltipsvenn", class="labColor margintop-15")!= i18n.__("shares.venn.chart.table")
+							div
+								ul(id="pagination-demo" class="pagination-sm")
+				- if(report_venn != null && report_venn.length==0)
+					h5=i18n.__("shares.venn.none")
+					p(class="paddingtop-20")=" "
+			div(id="sharesAll", class="displaynone")
+				h4= i18n.__("shares.all.title")
+				- if(filteroutput2 != null && filteroutput2.length > 0)
+					p!=i18n.__("shares.all.subtitle")
+					div(class="ct-chart ct-perfect-fourth")
+					div(id="tooltips", class="labColor") &nbsp;
+				- if(filteroutput2 != null && filteroutput2.length==0)
+					h5= i18n.__("shares.all.none")
+					p(class="paddingtop-20")=" "
+			div(id="monthAll", class="displaynone")
+				h4= i18n.__("shares.month.title")
+				- var month = "month";
+				- //var filteroutput = test.filter(function(x){console.log("x.monthorder: "+x.monthorder); console.log("x.yearorder: "+x.yearorder); console.log("now.getFullYear(): "+ now.getFullYear()); console.log("now.getMonth(): "+ now.getMonth()); console.log("so: "+ (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth())); return (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth() + 1)});
+				- if(filteroutput != null && filteroutput.length > 0) 
+					p!=i18n.__("shares.month.subtitle1") + month + i18n.__("shares.month.subtitle2")
+					div(class="ct-chart0 ct-perfect-fourth")
+					div(id="tooltips0", class="labColor") &nbsp;
+				- if(filteroutput != null && filteroutput.length == 0) 
+					h5
+						span!=i18n.__("shares.month.none")
+			div(class="paddingtop-25;") &nbsp;
+			- var array_rows = " |"
+			- var array_values = "0|"
+			- var array_rows2 = []
+			- var array_values2 = ""
+			- if(filteroutput2 != null && filteroutput2.length > 0) 
+				-var ob = filteroutput2
+				-for(var prop in ob)
+					- array_rows = array_rows + ob[prop].agent + "|"
+					- array_values = array_values + ob[prop].count + "|"
+				-var ob2 = filteroutput
+				-for(var prop in ob2)
+					- array_rows2 = array_rows2 + ob2[prop].agent + "|"
+					- array_values2 = array_values2 + ob2[prop].counting + "|"
+
+				script.
+					var var_filteroutput = "#{filteroutput}", var_array_values = "#{array_values}", var_array_rows = "#{array_rows}", var_array_rows2 = "#{array_rows2}", var_array_values2 = "#{array_values2}", var_dot_select = "#{i18n.__("dot.selected")}";
+				script(type="text/javascript" src="/js/shares-chartnotes-utils.js")
+			div(class="slide-out-tip-div account-slide-container")
+				a(class="handle" href="", title='#{i18n.__("search.tip.title")}')!=Content
+				div(class="slide-container-one")
+					div(class="textalign-center")
+						span(class="zoom_controls")
+							a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+								span(class="fa fa-minus-circle")
+							a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+								span(class="fa fa-circle-o-notch")
+							a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+								span(class="fa fa-plus-circle")
+						div(class="threepointssep margintopbelow-10")
+					p(class="font-12")!= i18n.__("shares.tip.header")
+					div(class="slide-desc")
+						span!= i18n.__("shares.tip.desc")
+		span(class="desktabonly", id="checkdisplay")

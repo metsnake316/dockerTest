@@ -1,0 +1,345 @@
+doctype html
+html(lang='en')
+   head
+     - var a = "layout." + title
+     - var language = "en"
+     - if(lang != null && lang != undefined)
+        - language = lang
+     - var isreghide = "isreghide"
+     - var isregpadding = "isregpadding"
+     - var menushare = "menushare"
+     - var menumyshares = "menumyshares2"
+     - var isadminroundaccountLeft = " isadminroundaccountLeft "
+     - var isregroundaccountLeft = " isregroundaccountLeft "
+     - var roundaccountLeft = isregroundaccountLeft
+     - if(isLoggedInAdmin == true)
+        - roundaccountLeft = isadminroundaccountLeft
+        - isreghide = ""
+        - isregpadding = ""
+        - menushare = ""
+        - menumyshares = ""
+     title!= 'LabYoke - ' + i18n.__(a)
+     :staticCache
+        link(href='/css/animate.css', rel='stylesheet')
+     if (title=='Orders' || title == "Share" || title=="Search" || title=="Help" || title=="Admins" || title=='Reagent Search')
+      :staticCache
+        link(rel="stylesheet" type="text/css" href="/css/datatables.min.css")
+     if(title=='Reagent Search' || title=='Search' || title=='Share' || title=='Orders' || title=='Admins')
+      :staticCache
+        link(href='/css/popup.css', rel='stylesheet')
+     :staticCache
+      link(href='/css/botchat.css', rel='stylesheet')
+      link(href='/css/bootstrap.css', rel='stylesheet')
+      link(href='/css/global.min.css', rel='stylesheet')
+      link(href='/css/font-awesome.css', rel='stylesheet')
+      link(href='/css/animation.css', rel='stylesheet')
+      link(href='/css/hamburgers-master/dist/hamburgers.css', rel='stylesheet')
+     if (title=='About Us')
+       :staticCache
+        link(href='/css/rotating-card.css', rel='stylesheet')
+     if (title=='Share' || title=='Admins')
+       :staticCache
+        link(href='/css/normalize.css', rel='stylesheet')
+        link(href='/css/component.css', rel='stylesheet')
+        link(href='/css/chartist.min.css', rel='stylesheet')
+     if (title=='Orders')
+      :staticCache
+        link(href='/css/chartist.min.css', rel='stylesheet')
+     meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+     meta(http-equiv='X-UA-Compatible', content='IE=edge')
+     meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no")
+     meta(name='robots', content='noindex, nofollow')
+     :staticCache 
+      script(type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
+      script(type="text/javascript" src="/javascripts/js.cookie.js")
+      script(type="text/javascript" src="/javascripts/jquery.page_zoom.min.js")
+
+     if (title=='Orders' || title == "Share" || title=="Search" || title=="Help" || title=="Admins" || title=='Reagent Search')
+      :staticCache
+        script(type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.js")
+     if (title=='Share')
+       :staticCache
+        script(type="text/javascript" src="/javascripts/canvas2svg.js")
+        script(type="text/javascript" src="/javascripts/jvenn.min.js")
+        script(type="text/javascript" src="/javascripts/jquery.twbsPagination.min.js")
+     if (title!='Help' || title!='About')
+       :staticCache
+        script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     if (title == "Share" || title=="Admins")
+        :staticCache
+         script(type="text/javascript" src="/javascripts/jumpToData.js")
+     :staticCache
+      link(rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon")
+      link(rel="icon" href="/images/favicon.ico" type="image/x-icon")
+
+     if scripts
+       each script in scripts
+          script(type='text/javascript', src=script)
+   - var user = labyoker
+   - var surname = labyokersurname
+   - var user_surname = user
+   - if(user_surname != null && user_surname != undefined && user_surname.length>1)
+      - user_surname = user_surname.substring(0, 1)
+   - else
+      - user_surname = "."
+   - if(surname != null && surname != undefined && surname.length>1)
+      - surname = surname.substring(0, 1)
+   - else
+      - surname = "..."
+
+   - var sharesnumber = sharesnum
+   - var ordersnumber = ordersnum
+   - var ordersnumclass = "num"
+   - var sharesnumclass = "num"
+   - if(sharesnumber == null || sharesnumber == undefined)
+       - sharesnumber = 0
+   - if(ordersnumber == null || ordersnumber == undefined)
+       - ordersnumber = 0
+   - if(sharesnumber != null && sharesnumber <10)
+        - sharesnumclass = "num"
+   - else if(sharesnumber != null && sharesnumber <100)
+        - sharesnumclass = "num greatherthannine"
+   - else if(sharesnumber != null && sharesnumber <1000)
+        - sharesnumclass = "num greatherthanninetynine"
+
+   - if(ordersnumber != null && ordersnumber <10)
+        - ordersnumclass = "num"
+   - else if(ordersnumber != null && ordersnumber <100)
+        - ordersnumclass = "num greatherthannine"
+   - else if(ordersnumber != null && ordersnumber <1000)
+        - ordersnumclass = "num greatherthanninetynine"
+   - if(user != null && user != undefined && user.length>11)
+        - user = user.substring(0, 8)
+        - if(user.substring(8,8) == " ")
+           - user = user.substring(0,7)
+   if(title=='Login')
+      :staticCache
+        script(type="text/javascript" src="/javascripts/imageCache.js")
+   body(class=loggedIn, ontouchstart="")
+     span(class="topping")
+
+     if (loggedIn==true)
+        script.
+          sessionStorage.clear();
+          console.log("cleared sessionStorage");
+        .navbar.navbar-inverse.navbar-fixed-top.adjustnav.navbackground.layout-container(role='navigation')
+            .container.nobottom.margintop-5
+                .navbar-header.paddingrightnav.layout-container-first
+                    button(class="hamburger hamburger--spring nooutline" data-toggle="collapse" data-target=".navbar-collapse" type="button")
+                      span(class="hamburger-box")
+                        span(class="hamburger-inner")
+
+                    - activateReports = "addMargin "
+                    - activateShares = "addMargin "
+                    - activateSearch = "addMargin desktabonly5 "
+                    - activateHelp = "addMargin "
+                    - activateAbout = "addMargin "
+                    - activateOrders = "addMargin "
+                    - activateAccount = "account-borders addMargin movetoleft " + isreghide
+                    - activateAdmin = "addMargin "
+                    - activeSearchMob = ""
+                    - activeAccountMob = ""
+                    - if (title == 'Reports')
+                        - activateReports = activateShares + "labColorBackgroundHover"
+                    - if (title == 'Share')
+                        - activateShares = activateShares + "labColorBackgroundHover"
+                    - if (title == 'Reagent Search')
+                        - activateSearch = activateSearch + "labColorBackgroundHover"
+                        - activeSearchMob = "labColorBackgroundHover colorsearchback pressedbutton"
+                    - if (title == 'Search')
+                        - activateSearch = activateSearch + "labColorBackgroundHover"
+                        - activeSearchMob = "labColorBackgroundHover pressedbutton"
+                    - if (title == 'Help')
+                        - activateHelp = activateHelp + "labColorBackgroundHover"
+                    - if (title == 'Orders')
+                        - activateOrders = activateOrders + "labColorBackgroundHover"
+                    - if (title == 'Account')
+                        - activateAccount = activateAccount
+                        - activeAccountMob = "labColorBackgroundHover pressedbutton"
+                    - if (title == 'About Us')
+                        - activateAbout = activateAbout + "labColorBackgroundHover"
+                    - if (title == 'Admins')
+                        - activateAdmin = activateAdmin + "labColorBackgroundHover"
+                span
+                  a(href="/account", style="z-index: -11;", class="layout-account roundaccountmob " + activeAccountMob)!= user_surname + "" + surname
+                span
+                  a(href="/search", class="layout-search roundaccountmob searchmob " + activeSearchMob)
+                    span(class=" layout-search-text fa fa-search colmenu " + activeSearchMob)
+                  label(for="togglerules" onclick="javascript:window.location.href='/admin/querytool'" title="System Admin console" class="animated fadeInUp labelexpandrules labeladmin roundaccountmob shadow adminmobile")!= "+"
+                .collapse.navbar-collapse(id="navburger")
+                    div.adjustWidthSearch.float-left(class=isreghide)
+                        - adjustWidth = ""
+                        - menuaccount = "menumyaccountadmin"
+                        if(isLoggedInAdmin == false)
+                            - adjustWidth =  "width-111"
+                            - menuaccount = "menumyaccount"
+                        ul.nav.navbar-nav.addMargin.adjustWidthSearchUL(id="#menumyaccounta")
+                            li(class=activateSearch)
+                                a(href="/search", class="nav-menu " + adjustWidth , id="menusearch")
+                                    span(class="fa fa-search colmenu layout-search-active")
+                                    span 
+                            if(isLoggedInAdmin == true)
+                                li(class=activateReports)
+                                        a(href="/reports",class="nav-menu", id="menusearch")
+                                            span(class="fa fa-file-text colmenu")
+                                            span #{i18n.__("layout.Reports")}
+                                li(class=activateAdmin)
+                                        a(href="/admins",class="nav-menu", id="menusearch")
+                                            span(class="fa fa-user-plus colmenu")
+                                            span #{i18n.__("layout.Admin")}
+                            
+                    div(class="paddingMobile " + isregpadding)
+                        ul.nav.navbar-nav(id="menumyshares", class="addMargin menumyshares layout-shares " + menumyshares)
+                            li(class=activateShares)
+                                a(href="/shares",class="nav-menu",id=menusharess)
+                                    span(class="fa fa-exchange colmenu")
+                                    span #{i18n.__("layout.Share")}
+                                   - if(sharesnumber>0) 
+                                    span(class="fa fa-comment bubble1")
+                                    span(class=sharesnumclass, id="bubblenum1")!=sharesnumber
+                            li(class=activateOrders)
+                                a(href="/orders",class="nav-menu",id=menusharess)
+                                    span(class="fa fa-ship colmenu")
+                                    span #{i18n.__("layout.Orders")}
+                                  - if(ordersnumber>0) 
+                                    span(class="fa fa-comment")
+                                    span(class=ordersnumclass)!=ordersnumber
+                        ul.nav.navbar-nav(id=menuaccount, class="addMargin menu-border padnum")
+                            li(class="account-borders addMargin")
+                                span
+                                  a(href="/account", class="roundaccount " + roundaccountLeft + activeAccountMob)!=user_surname + "" + surname
+                                label(for="togglerules" class="animated fadeInUp labelexpandrules shadow admindesktop" title="System Admin console" onclick="javascript:window.location.href='/admin/querytool'")!= "+"
+                            li(class=activateHelp)
+                                a(href='/help', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-anchor colmenu")
+                                    span #{i18n.__("layout.Help")}
+                            li(class=activateAbout)
+                                a(href='/about', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-home colmenu")
+                                    span #{i18n.__("layout.Us")}
+                    ul.nav.navbar-nav.navbar-right
+                        li(class="nav-menu-logout cursor-pointer")
+                            a 
+                                span(class="desktabonly4 marginleft-5") #{i18n.__("layout.Logout")}
+                                span(class="mobileonly2 marginleft-5") #{i18n.__("layout.Logout2")}
+     div.closemenu
+          block content
+         :staticCache
+          script(type="text/javascript" src="/javascripts/bootstrap.min.js")
+          :staticCache
+            script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js")
+            script(type="text/javascript" src="/javascripts/jquery.ui.touch-punch.min.js")
+
+         if(title=='Reagent Search' || title=='Search' || title=='Share' || title=='Orders' || title=='Account')
+          :staticCache
+            script(src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js")
+
+          div(class="labbot sleep")
+            span(class="fa fa-comment sleep0 layout-chatbot")
+            img(src="/images/tip5.png" class="sleepimg width-40")      
+          div(id="popup1bot" class="overlaybot")
+            div(class="popupbot")
+              div
+                div(class="modal-header")
+                  span(class="fa fa-arrows layout-modal")
+                a(class="close" href="#") &times;
+              div(class="contentbot")
+                div(class="labbot awake")
+                  span(class="fa fa-commenting layout-comment")
+                  img(src="/images/tip3.png" class="width-50")
+                div(id="bot", class="layout-bot")
+          
+         if (title=='Share' || title=='Admins')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/custom-file-input.js")
+         if(title=='Reports')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/html2canvas.js")
+         if (title=='Reports' || title=='Account' || title=='Register' || title=='Confirm Registration' || title=='Change Password')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/jquery.maskedinput.min.js")
+         if (title=='Reports')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/jspdf.js")
+            script(type="text/javascript" src="/javascripts/xlsx.core.min.js")
+            script(type="text/javascript" src="/javascripts/Blob.js")
+            script(type="text/javascript" src="/javascripts/FileSaver.js")
+            script(type="text/javascript" src="/javascripts/savexl.js")
+         if (title=='Reports' || title=='Account' || title=='Register' || title=='Confirm Registration' || title=='About Us' || title=='Change Password' || title=='Forgot Password' || title=='Register' || title=='Help' || title=='Orders' || (title=='Share' && !doing) || title=='Search' || title == 'Reagent Search' || title == 'Admins')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/spinner.js")
+         div(class="layout-footer")
+                div(class="layout-footer-text")="@LabYoke"
+                  img(src="/images/"+language+".png" alt="Language" data-toggle="tooltip" title="Language" class="layout-footer-img")
+         a(href="#0" class="cd-top" title="go to top")
+          span(class="fa fa-chevron-circle-up")
+         script.
+          var lang = !{JSON.stringify(language)}, var_processing = "#{i18n.__("datatable.processing")}", var_search = "#{i18n.__("datatable.search")}", var_lengthMenu = "#{i18n.__("datatable.lengthMenu")}", var_info = "#{i18n.__("datatable.info")}", var_infoEmpty = "#{i18n.__("datatable.infoEmpty")}", var_infoFiltered = "#{i18n.__("datatable.infoFiltered")}", var_loadingRecords = "#{i18n.__("datatable.loadingRecords")}", var_zeroRecords = "#{i18n.__("datatable.zeroRecords")}", var_emptyTable = "#{i18n.__("datatable.emptyTable")}", var_first = "#{i18n.__("datatable.first")}", var_previous = "#{i18n.__("datatable.previous")}", var_next = "#{i18n.__("datatable.next")}", var_last = "#{i18n.__("datatable.last")}", var_searchplaceholder = "#{i18n.__("datatable.searchplaceholder")}", var_sortAscending = "#{i18n.__("datatable.sortAscending")}", var_sortDescending = "#{i18n.__("datatable.sortDescending")}",var_bot_placeholder = "#{i18n.__("layout.bot.placeholder")}";
+         if(title=='Reagent Search' || title=='Search' || title=='Share' || title=='Orders' || title=='Admins' || title=='Account')
+           :staticCache
+            script(type="text/javascript" src="/javascripts/init.js")
+            script(type="text/javascript" src="/js/lang-utils.js")
+            script(type="text/javascript" src="/javascripts/popup.js") 
+         if(title=='Login')
+           :staticCache
+            script(type="text/javascript" src="/js/login-utils.js")
+            script(type="text/javascript" src="/javascripts/jquery.lettering.js")
+         if(title=='Admins')
+           :staticCache
+            script(type="text/javascript" src="/js/admins-utils.js")
+         if(title=='Reagent Search')
+           :staticCache
+            script(type="text/javascript" src="/js/search-utils.js")
+         if(title=='Account')
+           :staticCache
+            script.
+              var var_account_button = "#{i18n.__("account.button")}", var_account_hide_button = "#{i18n.__("account.hide")}", var_bot_placeholder = "#{i18n.__("layout.bot.placeholder")}";
+            script(type="text/javascript" src="/js/account-utils.js")
+         if(title=='Register')
+           :staticCache
+            script.
+              var var_register10 = "#{i18n.__("index.register.message10")}", var_register7 = "#{i18n.__("index.register.message7")}", var_register8 = "#{i18n.__("index.register.message8")}", var_register9 = "#{i18n.__("index.register.message9")}", var_register5 = "#{i18n.__("index.register.message5")}", var_register6 = "#{i18n.__("index.register.message6")}"; 
+            script(type="text/javascript" src="/js/register-utils.js")
+         if(title=='Confirm Registration')
+           :staticCache
+            script(type="text/javascript" src="/js/register-utils.js")
+         if(title=='Change Password')
+           :staticCache
+            script.
+              var var_changepass_msg2 = "#{i18n.__("index.changepass.message2 ")}", var_reg_msg4 = "#{i18n.__("index.register.message4 ")}";
+            script(type="text/javascript" src="/js/changepassword-utils.js")
+         if(title=='Forgot Password')
+           :staticCache
+            script(type="text/javascript" src="/js/forgot-utils.js")
+         if(title=='Help')
+           :staticCache
+            script(type="text/javascript" src="/js/help-utils.js")
+         if(title=='Orders')
+           :staticCache
+            script(type="text/javascript" src="/js/orders-utils.js")
+         if(title=='Share')
+           :staticCache
+            script(type="text/javascript" src="/js/shares-utils.js")
+         if(title=='Search')
+           :staticCache
+            script(type="text/javascript" src="/js/search-utils.js")          
+         if(title=='Play')
+           :staticCache
+            script(type="text/javascript" src="/js/play-utils.js")
+         if(title=='Pop')
+           :staticCache
+            script(type="text/javascript" src="/js/pop-utils.js")
+         if(title=='Reports')
+           script.
+              var var_reportpdf="#{i18n.__("report.pdf.downloaded")}", var_reportxcel="#{i18n.__("report.xcel.downloaded")}", var_resultsMoneyIntro="#{resultsMoneyIntro}", var_dataIntro = '!{dataIntro}', var_fail = "#{i18n.__("reports.message.fail")}", var_reports_download_pdf = "#{i18n.__("reports.download.pdf")}", var_reports_download_today = "#{i18n.__("reports.download.today.file")}",  var_reports_download_excel = "#{i18n.__("reports.download.excel")}", var_sunday_min = "#{i18n.__("date.sunday.min")}" , var_monday_min = "#{i18n.__("date.monday.min")}", var_tuesday_min = "#{i18n.__("date.tuesday.min")}" , var_wednesday_min = "#{i18n.__("date.wednesday.min")}", var_thursday_min = "#{i18n.__("date.thursday.min")}", var_friday_min = "#{i18n.__("date.friday.min")}", var_saturday_min = "#{i18n.__("date.saturday.min")}", var_month0 = "#{i18n.__("date.jan")}" , var_month1 = "#{i18n.__("date.fev")}", var_month2 = "#{i18n.__("date.mars")}" , var_month3 = "#{i18n.__("date.avril")}", var_month4 = "#{i18n.__("date.mai")}", var_month5 = "#{i18n.__("date.juin")}", var_month6 = "#{i18n.__("date.juillet")}", var_month7 = "#{i18n.__("date.aout")}", var_month8 = "#{i18n.__("date.sept")}", var_month9 = "#{i18n.__("date.octobre")}", var_month10 = "#{i18n.__("date.nov")}", var_month11 = "#{i18n.__("date.dec")}",var_messageOrders = "#{addMessageOrders}",var_messageShares = "#{addMessageShares}",var_messageInsuff = "#{addMessageInsuff}",var_messageMoney = "#{addMessageMoney}"; 
+           script(type="text/javascript" src="/js/reports-utils.js")
+         :staticCache
+          script.
+            var var_labyoker = '#{labyoker}';
+            console.log("superadmin: " + "#{superadmin}");
+          script(type="text/javascript" src="/js/global.js")
+         if (loggedIn==true)
+           script.
+            var var_currente = "#{currente}", var_currentl = "#{currentl}", var_body1 = "#{i18n.__("notification.body1")}", var_title = "#{i18n.__("notification.title")}", var_body2="#{i18n.__("notification.body2")}", var_labyoker="#{labyoker}";
+           script(type="text/javascript" src="/javascripts/notifications.js")
+              

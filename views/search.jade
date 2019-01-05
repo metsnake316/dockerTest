@@ -1,0 +1,188 @@
+extends layout
+
+block content
+    - var catalogradio = searchformTextCatalog
+    - var searchradio = searchformText
+    - var searchradioType = searchType
+    - var slide = "moveFromLeft"
+    if searchradioType
+      - slide = ""
+    form(action="/orders" id="orders" method="post")
+        input(name="emailform" type="hidden" id="emailform" value="")
+        input(name="agentform" type="hidden" id="agentform" value="")
+        input(name="vendorform" type="hidden" id="vendorform" value="")
+        input(name="catalogform" type="hidden" id="catalogform" value="")
+        input(name="locationform" type="hidden" id="locationform" value="")
+        input(name="categoryform" type="hidden" id="categoryform" value="")
+        input(name="qtyform" type="hidden" id="qtyform" value="")
+        input(name="labform" type="hidden" id="labform" value="")
+        input(name="langform" type="hidden" id="langform" value="")
+        div(id="ios-light")
+            center
+                h1 #{i18n.__("search.layovertitle")}
+                p(id="orderText")
+                div
+                    div(id="actionorder" class="exit search-exit") #{i18n.__("search.layoverok")}
+                    div(class="exit" onclick="iosLightExit()") #{i18n.__("search.layovercancel")}
+        div(class="shade" id="shade")
+        div(class="shade-light" id="shade-light")
+    div(class="zoomnow container login marginbottom positionings searchmargins container2 botbottom " + slide)
+        div(class="searchlogo")
+          img(src="/images/logo_one_bottle_L_2.png", alt="The Yoke",  data-toggle="tooltip",title="Yoke", class="searchlogoimg")
+          img(src="/images/logo_one_bottle_R_2.png", alt="The Yoke", data-toggle="tooltip", title="Yoke", class="searchlogoimg")
+        div(class="radiosearch keysearchs searchradios")
+          div(class="float-left")
+            input(type="radio" name="search" value="keysearch" id="keyradio")
+            label(for="keyradio", class="float-left", onClick="radioclick()")
+              span #{i18n.__("search.radio.key")}
+            div(class="checking shadow", onClick="radioclick()")
+          div(class="margincatalogradio")
+            input(type="radio" name="search" value="catalogsearch" id="catalogradio" class="marginleft-15")
+            label(for="catalogradio", class="catalogradio search-radio-catalog", onClick="radiocatclick()")
+              span #{i18n.__("search.radio.catalog")}
+            div(class="checkingcatalog shadow", onClick="radiocatclick()")
+        div(class="keysearch displaynone", id="keysearch")
+            span(id="loopkey", class="fa fa-search colmenu desktabonly search-key")
+            - searchText = i18n.__("search.searchholder")
+            - classButton = "btn-success"
+            if searchformText
+                - searchText = i18n.__("search.results.text") + searchformText
+                - classButton = "btn-success-results"          
+            div(id="ctl00_Div2" class="row")
+                div
+                    if message
+                        div(class="alert alert-danger-report messagesearch alertshadow")!= message
+                    form(action="/search" method="post" class="search-form")
+                        div(class="textentry")
+                            input(type="hidden" name="searchType" value="key")
+                            input(name="searchText" list="agent-datalist"  type="text" id="searchText" class="form-control form-control0 searchinput" placeholder=searchText)
+                            datalist(id="agent-datalist")
+                                -var ob2 = agentsResults
+                                -for(var prop in ob2)
+                                    option(value='#{ob2[prop].agent}')
+                        div(class="buttons positionbuttons search-buttons")
+                            button(class="btn " + classButton + " btn-lg btn-block btnsearch shadow search-submit" type='submit') #{i18n.__("search.buttonreagent")}
+
+        div(class="keysearch displaynone", id="catalogsearch")
+            span(id="loopcatalog", class="fa fa-search colmenu desktabonly search-key")
+            - searchTextCatalog = i18n.__("search.catalogholder")
+            - classButtonCatalog = "btn-success"
+            if searchformTextCatalog
+                - searchTextCatalog = i18n.__("search.results.text") + searchformTextCatalog
+                - searchformTextCatalog = i18n.__("search.results.text")  + searchformTextCatalog
+                - classButtonCatalog = "btn-success-results"            
+            div(id="ctl00_Div2" class="row")
+                div
+                    if messageCatalog
+                        div(class="alert alert-danger-report messagesearch alertshadow")!= messageCatalog
+                    form(action="/searchCatalog" method="post" class="search-form")
+                        div(class="textentry")
+                            input(type="hidden" name="searchType" value="catalog")
+                            input(name="searchTextCatalog" list="catalog-datalist" type="text" id="searchTextCatalog" class="form-control form-control0 searchinput" placeholder=searchTextCatalog)
+                            datalist(id="catalog-datalist")
+                                -var ob2 = agentsResults
+                                -for(var prop in ob2)
+                                    option(value='#{ob2[prop].catalognumber}')
+                        div(class="buttons positionbuttons search-buttons")
+                            button(class="btn " + classButtonCatalog + " btn-lg btn-block btnsearch shadow search-submit" type='submit') #{i18n.__("search.buttoncatalog")}        
+
+
+        div(class="slide-out-tip-div desktabonly account-slide-container")
+            a(class="handle slide-content-one" href="", title='#{i18n.__("search.tip.title")}')!=Content
+            div(class="slide-container-one")
+                div(class="textalign-center")
+                    span(class="zoom_controls")
+                        a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+                          span(class="fa fa-minus-circle")
+                        a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+                          span(class="fa fa-circle-o-notch")
+                        a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+                          span(class="fa fa-plus-circle")
+                    div(class="threepointssep margintopbelow-10")
+                p(class="font-12pt")!= i18n.__("search.tip.header")
+                div(class="slide-desc")
+                  span!= i18n.__("search.tip.desc")
+
+        div(class="threepointssep")
+        if email != undefined
+          div(id="ordered" class="animated fadeInDown")
+            div(class="alert")
+                h4(class="orderedh4")= i18n.__("orders.success.title")
+                  span(class="search-location")=" " + order_location
+                  span="!"
+                p=" "
+                p
+                  b= i18n.__("orders.success.reagent")
+                  span= order_agent
+                  br
+                  b= i18n.__("orders.success.catalog")
+                  span= order_catalog
+                  br
+                  b= i18n.__("orders.success.vendor")
+                  span= order_vendor
+
+
+        if(searchResults != null && searchResults.length > 0)
+          div(class="results10")
+              div
+                  span(class="textalign-center")
+                    h3(class="font-400") #{i18n.__("search.resultstitle")}
+                        if searchformText
+                            span(class="register-success-label")=" " + searchText
+                        if searchformTextCatalog
+                            span(class="register-success-label")=" " + searchformTextCatalog
+                    h4 #{i18n.__("search.resultssubtitle")}
+              #labyokers.container.width-100
+                div(id="ctl00_Div2" class="row rank").match
+                   - i = 1
+                   - className = ""
+                   div(class="table-responsive")                    
+                      table(id="rankTblSearch" class="table rankTbl card-list-table")
+                        thead
+                         tr(class="you info-best" class="font-bold")
+                          td(class="desktabonly")= ' '
+                          td(class="desktabonly")= '# '
+                          td(class="wrapped") #{i18n.__("search.table.reagent")}
+                          td(class="desktabonly") #{i18n.__("search.table.catalog")}
+                          td(class="desktabonly") #{i18n.__("search.table.vendor")}
+                          td #{i18n.__("search.table.location")}
+                          td #{i18n.__("search.table.order")}
+                        tbody
+                         -var ob = searchResults
+                         - var j = 1
+                         -for(var prop in ob)
+                            - var i = prop % 2
+                            - var classname = "searchagents animated slideInDown";
+                            - if(i==0)
+                                - classname = "searchagents animated slideInUp"
+                            - var agent = ob[prop].agent
+                            - var vendor = ob[prop].vendor
+                            - var catalognumber = ob[prop].catalognumber
+                            - var fullname = fullname
+                            - var sendemail = sendemail
+                            - var reqemail = ob[prop].email
+                            - var location = ob[prop].location  
+                            - var category = ob[prop].category  
+                            - var qty = ob[prop].quantity
+                            - var lab = ob[prop].lab                   
+                            tr(class=classname)
+                                td(class="removecard")= 'x'
+                                td(data-title="#" class="desktabonly")= j
+                                td(data-title="#{i18n.__('search.table.reagent')}" class="wrapped") #{ob[prop].agent}
+                                td(data-title="#{i18n.__('search.table.catalog')}" class="/*desktabonly*/") #{ob[prop].catalognumber}
+                                td(data-title="#{i18n.__('search.table.vendor')}") #{ob[prop].vendor}
+                                td(data-title="#{i18n.__('search.table.location')}") #{ob[prop].location}
+                                td(data-title="" class="carticon")
+                                  span(onclick="iosLight('#{agent}','#{vendor}','#{catalognumber}','#{reqemail}','#{location}','#{category}','#{qty}','#{lab}','#{lang}','#{ob[prop].lang}')", class="cursor-pointer")
+                                        img(src="images/cart.png", class="imgcart", alt=i18n.__("search.resultssubtitle"), data-toggle="tooltip",title=i18n.__("search.resultssubtitle"))
+                            - j = j + 1
+
+        if(searchResults != undefined && searchResults.length == 0 && searchformText)
+          div.container.searchResults(id="results2 resultsshadow")
+                div(id="ctl00_Div2" class="row rank")
+                   div(class="table-responsive")
+                      span(class="textalign-center")
+                        h3(class="font-400")="Sorry we could not find any location for your"
+                            span(class="register-success-label")=" " + searchText
+                        h4="Try another chemical reagent!"
+    span(class="desktabonly", id="checkdisplay")

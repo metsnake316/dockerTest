@@ -1,0 +1,88 @@
+extends layout
+
+block content                      
+  div(class="container margintop container2 moveFromLeft")
+    div(class="fronthelp margintop-30")
+      a(href="/search")
+        :staticCache
+          img(src="/images/house0.png", alt="The Yoke", class="yokelogo aboutlogo")
+    div(class="section2")
+      h1!= i18n.__("about.aboutus") + "."
+      div.pointsLayout.alert.results
+          span #{i18n.__("about.desc1")}
+      div.pointsLayout.alert.results
+          span #{i18n.__("about.desc5")}
+      div.pointsLayout.alert.results
+        div.pointsLayout.alert.alert-success
+          span #{i18n.__("about.desc2")}
+        div.pointsLayout.alert.alert-success
+          span #{i18n.__("about.desc3")}
+      div.pointsLayout.alert.results
+          span!= i18n.__("about.desc4")
+      div.pointsLayout.alert.results
+          span #{i18n.__("about.desc6")}
+    div(class="teamrow hideoverflow")
+      div(class="teamcolumn manual-flip")
+        div(class="teamcard")
+          div(class="front front1")
+            img(src="/images/card.jpg" alt="Jane" class="width-100")
+            div(class="teamcontainer")
+              h3!="Andria Schibler"
+              p(class="teamtitle") #{i18n.__("card1.title")}
+              div(class="header")
+                h5(class="motto") #{i18n.__("card1.motto")}
+                span(class="threepointssep")
+              div(class="teamcontent")
+                div(class="main")
+                   h4(class="cardtext-center font-bold") #{i18n.__("card1.aboutme")}
+                   p(class="cardtext-center") #{i18n.__("card1.desc")}
+                   div(class="stats-container")
+                       div(class="stats")
+                           h4!="2350"
+                           p #{i18n.__("card1.stats1")}
+                       div(class="stats float-right")
+                           h4!="14"
+                           p #{i18n.__("card1.stats2")}
+      div(class="teamcolumn manual-flip /*teamcolumn1*/")
+        div(class="teamcard")
+          div(class="front front2")
+            img(src="images/card2_0.jpg" alt="Jane" class="width-100")
+            div(class="teamcontainer")
+              h3!="Eran Shaysh"
+              p(class="teamtitle") #{i18n.__("card2.title")}
+              div(class="header")
+                h5(class="motto") #{i18n.__("card2.motto")}
+                span(class="threepointssep")
+              div(class="teamcontent")
+                div(class="main")
+                   h4(class="cardtext-center font-bold") #{i18n.__("card2.aboutme")}
+                   p(class="cardtext-center") #{i18n.__("card2.desc")}
+                   div(class="stats-container")
+                       div(class="stats")
+                           h4!="76"
+                           p #{i18n.__("card2.stats1")}
+                       div(class="stats float-right")
+                           h4!="114"
+                           p #{i18n.__("card2.stats2")}
+      div(class="teamcolumn manual-flip /*teamcolumn2*/")
+        div(class="teamcard /*teamcard2*/")
+          div(class="front front3")
+            img(src="images/card3_0.png" alt="Jane" class="width-100")
+            div(class="teamcontainer")
+              h3!="Gnagna Konaté-Shaysh"
+              p(class="teamtitle") #{i18n.__("card3.title")}
+              div(class="header")
+                h5(class="motto") #{i18n.__("card3.motto")}
+                span(class="threepointssep")
+              div(class="teamcontent")
+                div(class="main")
+                   h4(class="cardtext-center font-bold") #{i18n.__("card3.aboutme")}
+                   p(class="cardtext-center") #{i18n.__("card3.desc")}
+                   div(class="stats-container")
+                       div(class="stats")
+                           h4!="5000K"
+                           p #{i18n.__("card3.stats1")}
+                       div(class="stats float-right")
+                           h4!="54"
+                           p #{i18n.__("card3.stats2")}
+  div(class="clear-both")

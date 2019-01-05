@@ -1,0 +1,223 @@
+extends layout
+
+block content
+	div(id="ios-light")
+		center
+			h1="Add."
+			p(id="addVennText")
+			div
+				div(id="actionorderVenn" class="exit dept-action-order")="OK"
+				div(class="exit" id="actioncancelVenn")="Cancel"
+	div(id="ios-lightdis")
+		center
+			h1="Disable."
+			p(id="disablelabText")
+			div
+				div(id="actionorderDisable" class="exit dept-action-order-disable")="OK"
+				div(class="exit" id="actioncancelDisable")="Cancel"
+	div(class="shade" id="shade")
+	div(class="shade-light" id="shade-light")
+	div(class="container login2 marginbottom margintop container2")
+		h1
+			span(class="fa fa-building lightyokecolor")
+			span!= ' Labs & Deps '
+			span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")		
+		p!="You can <span class='font-bold'>create</span> a new department and lab. As well as <span class='font-bold'>set</span> some useful settings for labs."
+
+		div(class="dept-select")
+			div(class="editstart animated zoomIn")
+				select(name="createSelect" type="text" id="createSelect" class="form-control" placeholder="Create...")
+					option(value="createNone" selected=(checkedstrAll===true ? "selected" : undefined) class="font-bold")="Start to ..."
+					option(value="createDept" selected=(checkedstrDept===true ? "selected" : undefined))="Create Department"
+					option(value="createLab" selected=(checkedstrLab===true ? "selected" : undefined))="Create Lab"
+					option(value="vennsettings" selected=(checkedstrVenn===true ? "selected" : undefined))="Set Lab Settings"
+					option(value="editLab" selected=(checkedstrEditLab===true ? "selected" : undefined))="Transfer Lab"
+			- if(vennsettings != undefined)
+				div
+					if successmessagevoiddept != null
+						div(class="alert alert-success fade in alert-dismissable deptvoidmsg")!= successmessagevoiddept
+					if errormessagevoiddept != null
+						div(class="alert alert-danger fade in alert-dismissable")!= errormessagevoiddept
+					div(class="deptlist")
+						- var test = JSON.parse(JSON.stringify(vennsettings).replace(/&quot;/g, '"'))
+						- var depts0 = test.departments
+						- var p = 0;
+						- for(var prop in depts0)
+							- var department = depts0[prop]
+							- var selname = "dept" + prop
+							select(name=selname type="text" id=selname class="deps animated bounceInDown marginright-15")
+								option(value=department selected="selected" class="font-bold")!= department
+								- var index = depts0.indexOf(department)
+								- if(index > -1)
+									- var labs0 = test.labs[index];	
+									- for(var prop2 in labs0)
+										option(value=labs0[prop2] pos=p department=department deptpos=prop class="font-bold")!= labs0[prop2]
+										- p += 1
+
+						- for(var prop in orphandepts)
+							- var department = orphandepts[prop].departmentname
+							select(name="deptorph"+prop type="text" id="deptorph"+prop class="depsorph animated slideInDown marginright-15orph")
+								option(value=department selected="selected" class="font-bold")!= department
+							span(class="fa fa-trash deletedept deptvoidtrash")
+								form(action="/admin/deletedept" method="post")
+									input(type="hidden" value=department name="department")
+
+
+			
+			- var checkedstrDept = false;
+			- if(section !=null && section.length>0 && section == "department")
+				- checkedstrDept = true
+			- var checkedstrLab = false;
+			- if(section !=null && section.length>0 && section == "lab")
+				- checkedstrLab = true
+			- var checkedstrVenn = false;
+			- if(section !=null && section.length>0 && section == "venn")
+				- checkedstrVenn = true
+			- var checkedstrEditLab = false;
+			- if(section !=null && section.length>0 && section == "editlab")
+				- checkedstrEditLab = true
+			- var checkedstrAll = false;
+			- if(section !=null && section.length>0 && section == "all")
+				- checkedstrAll = true
+			div(id="labdetail", class="displaynone")
+				h3(class="textalign-center")!= 'Lab'
+				p(class="dept-desc")!="Here are the <b class='dept-desc-one'>users</b> assigned to the lab. <b class='dept-desc-two'>Adminsitrators</b> are highlighted."
+				div(id="labmembers")
+
+			div(id="createDept", class="setlab displaynone")
+				h3(class="textalign-center")!= 'Create a new Department.'
+				p(class="dept-desc")!="Add a department to the existing list."
+				if errormessagedept != null
+					div(class="alert alert-danger fade in alert-dismissable alert-create-dept")!= errormessagedept
+				if successmessagedept != null
+					div(class="alert alert-success fade in alert-dismissable alert-create-dept")!= successmessagedept
+
+				div(id="ctl00_Div2" class="results resultsshadow borderradius")
+					form(action="/admin/createdepartment" method="post")
+						div(class="textentry")
+							label(class="width-100")!="<span class='labColor'> Name </span>"
+							input(name="department" type="text" id="department" class="form-control placeholderColor" placeholder="Department name")
+						div(class="buttons")
+							button.btn.btn-success.btn-lg.btn-block.shadow.btn50.dept-button(type='submit') Add
+							img(src="/images/lab.png", alt="The Lab", title="Lab", class="dept-button-image")
+			div(id="createLab", class="setlab displaynone")
+				h3(class="textalign-center")!= 'Add a new lab.'
+				p(class="dept-desc")!="Each lab is assigned an administrator and department. Labs may or may not be part of the Venn Diagram. There is a maximum of 6 labs per department that can be listed in the diagram."
+				if errormessagelab != null
+					div(class="alert alert-danger fade in alert-dismissable alert-create-lab")!= errormessagelab
+				if successmessagelab != null
+					div(class="alert alert-success fade in alert-dismissable alert-create-lab")!= successmessagelab
+
+				div(id="ctl00_Div2" class="results resultsshadow borderradius")
+					form(action="/admin/createlab" method="post")
+						div(class="textentry")
+						label(class="width-100")!="<span class='labColor'> Name </span>"
+						input(name="labname" type="text" id="labname" class="form-control placeholderColor" placeholder="Lab name")
+						label(class="dept-label-one")!="<span class='labColor'> Department </span>"
+						select(name="deptlab" type="text" id="deptlab" class="form-control dept-label-two" placeholder="Department")
+							option(value"selectdept")="Select a Department"
+							- if(depts != undefined)
+								- for(var prop in depts)
+									- var department = depts[prop].departmentname
+									option(value=department) #{department}
+						div(class="dept-arrow")
+							div(class="arrow-up marginbottom-5")
+							div(class="arrow-down")
+
+						div(class="buttons")
+							button.btn.btn-success.btn-lg.btn-block.shadow.btn50.dept-button-one(type='submit') Add
+							img(src="/images/lab.png", alt="The Lab", title="Lab", class="dept-button-one-image")
+
+			div(id="editLab", class="setlab displaynone")
+				h3(class="textalign-center")!= 'Transfer an existing Lab.'
+				p(class="dept-desc")!="Each lab is assigned an administrator and department. Select the department and/or Administrator that the Lab should be assigned to provided they are available and have not been assigned to another lab."
+				if errormessagelabedit != null
+					div(class="alert alert-danger fade in alert-dismissable alert-edit-lab")!= errormessagelabedit
+				if successmessagelabedit != null
+					div(class="alert alert-success fade in alert-dismissable alert-edit-lab")!= successmessagelabedit
+
+				div(id="ctl00_Div2" class="results resultsshadow borderradius")
+					form(action="/admin/editlab" method="post")
+						div(class="textentry")
+						label(class="width-100")!="<span class='labColor'> Name </span>"
+						select(name="labnameedit" type="text" id="labnameedit" class="form-control dept-edit-lab" placeholder="Department")
+							option(value"selectlabnameedit")="Select a Lab"
+							- if(labs != undefined)
+								- for(var prop in labs)
+									- var lab = labs[prop]
+									- var admin = admins[prop]
+									option(value=lab, admin=admin) #{lab}
+						div(class="dept-edit-arrow")
+							div(class="arrow-up marginbottom-5")
+							div(class="arrow-down")
+						div(id="transferdept", class="dept-edit-transfer")
+							label(class="dept-edit-label")!="<span class='labColor'> Department </span>"
+							select(name="deptlabedit" type="text" id="deptlabedit" class="form-control dept-edit-select" placeholder="Department")
+								option(value"selectdeptedit")="Select a Department"
+								- if(depts != undefined)
+									- for(var prop in depts)
+										- var department = depts[prop].departmentname
+										option(value=department) #{department}
+							div(class="dept-edit-arrow-one")
+								div(class="arrow-up marginbottom-5")
+								div(class="arrow-down")
+						div(id="transferadmin", class="dept-transfer")
+							label(class="dept-transfer-label")!="<span class='labColor'> Administrator </span>"
+							select(name="adminlabedit" type="text" id="adminlabedit" class="form-control dept-transfer-select"  placeholder="Admin")
+								option(value"selectdadminedit")="Select an Administrator"
+								- if(users != undefined)
+									- for(var prop in users)
+										- var user = users[prop].email
+										option(value=user) #{user}
+							div(class="dept-transfer-arrow")
+								div(class="arrow-up marginbottom-5")
+								div(class="arrow-down")
+							div(class="buttons")
+								button.btn.btn-success.btn-lg.btn-block.shadow.btn50.dept-button(type='submit') Edit
+								img(src="/images/lab.png", alt="The Lab", title="Lab", class="dept-button-image")
+
+			div(id="vennSettings", class="setlab displaynone")
+				h3(class="textalign-center")!= 'Edit Lab Settings.'
+				p(class="dept-desc")!="In this section, you can now add a lab to its Department's Venn diagram. Or Set the lab administrator. Or Disable a lab provided no users have been assigned to it.<br/><b>Note:</b> You can add up to 6 labs per department for graph visibility sake."
+				if errormessagevenn != null
+					div(class="alert alert-danger fade in alert-dismissable alert-edit-venn")!= errormessagevenn
+				if successmessagevenn != null
+					div(class="alert alert-success fade in alert-dismissable alert-edit-venn")!= successmessagevenn
+				if errormessagedisable != null
+					div(class="alert alert-danger fade in alert-dismissable alert-edit-venn")!= errormessagedisable
+				if successmessagedisable != null
+					div(class="alert alert-success fade in alert-dismissable alert-edit-venn")!= successmessagedisable
+				if errormessageadmin != null
+					div(class="alert alert-danger fade in alert-dismissable alert-edit-venn")!= errormessageadmin
+				if successmessageadmin != null
+					div(class="alert alert-success fade in alert-dismissable alert-edit-venn")!= successmessageadmin
+				div(id="ctl00_Div2" class="results resultsshadow borderradius")
+					form(action="/admin/setvenn" method="post")
+						label(class="width-100")!="<span class='labColor'>Department </span>"
+						select(name="deptlabvenn" type="text" id="deptlabvenn" class="form-control dept-edit-lab" placeholder="Department")
+							option(value="selectdeptvenn")="Select a Department"
+							- if(depts != undefined)
+								- for(var prop in depts)
+									- var department = depts[prop].departmentname
+									option(value=department) #{department}
+						div(class="dept-edit-arrow")
+							div(class="arrow-up marginbottom-5")
+							div(class="arrow-down")
+					div(id="vennSettingsNolab", class="displaynone")
+					div(id="vennSettingsDisplay", class="displaynone")
+
+						div(class="table-responsive" id="table")                
+							table(id="rankTblload" class="table rankTbl")
+								thead(class="you info-best font-bold")
+									th(class="wrapped") Lab
+									th(class="wrapped") Admin
+									th(class="wrapped") Isvenn
+									th(class="wrapped") Disable
+								tbody(id="vennbody")
+
+						div(class="buttons")
+							img(src="/images/lab.png", alt="The Lab", title="Lab", class="dept-button-image")
+		- var venn = vennsettings
+		script.
+			var var_vennsettings = "#{JSON.stringify(vennsettings)}", var_venn = "#{JSON.stringify(venn)}", var_vennuser = "#{JSON.stringify(vennuser)}", var_labadmins = "#{JSON.stringify(labadmins)}", var_checkedstrDept =  "#{checkedstrDept}", var_checkedstrLab =  "#{checkedstrLab}", var_checkedstrEditLab =  "#{checkedstrEditLab}", var_checkedstrVenn =  "#{checkedstrVenn}", nochange = 0;
+		script(type="text/javascript" src="/js/admin-departments-utils.js")

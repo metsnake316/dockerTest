@@ -1,0 +1,105 @@
+extends layout
+
+block content
+                           
+
+
+  #calendarGroupStage.container
+    if groupPhase && groupPhase!=null && groupPhase.length > 0
+        div(id="ctl00_Div2"  class="row roundHdr")
+          h1= 'First Round'
+          - nodups = []
+          - each phaseone in groupPhase 
+               - if(nodups.indexOf(phaseone.shortdate) == -1)
+                   - link = "/event/"+phaseone.shortdate
+                   - pastdate = ""
+                   ul
+                     li
+                       - if(moment(phaseone.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                          - pastdate = "pastdate"
+                          span(class="icon-check")
+                       a(href=link class=pastdate)= phaseone.shortdate
+                       - nodups.push(phaseone.shortdate)
+  #secondPhase.container
+    if secondPhase && secondPhase!=null && secondPhase.length > 0
+        div(id="ctl00_Div2" class="row roundHdr")
+          h1= 'Round of 16'
+          - nodups = []
+          - each phase in secondPhase 
+               - if(nodups.indexOf(phase.shortdate) == -1)
+                   - link = "/event/"+phase.shortdate
+                   - pastdate = ""
+                   ul
+                      li
+                         - if(moment(phase.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                            - pastdate = "pastdate"
+                            span(class="icon-check")
+                         a(href=link class=pastdate)= phase.shortdate
+                         - nodups.push(phase.shortdate)
+ 
+  #quarters.container
+    if quarters && quarters!=null && quarters.length > 0
+        div(id="ctl00_Div2"  class="row roundHdr")
+          h1= 'Quarter-Finals'
+          - nodups = []
+          - each phase in quarters 
+               - if(nodups.indexOf(phase.shortdate) == -1)
+                   - link = "/event/"+phase.shortdate
+                   - pastdate = ""
+                   ul
+                      li
+                         - if(moment(phase.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                            - pastdate = "pastdate"
+                            span(class="icon-thumbs-up-1")                         
+                         a(href=link class=pastdate)= phase.shortdate
+                         - nodups.push(phase.shortdate)
+
+  #semis.container
+    if semis && semis!=null && semis.length > 0
+        div(id="ctl00_Div2"  class="row roundHdr")
+          h1= 'Semi-Finals'
+          - nodups = []
+          - each phase in semis 
+               - if(nodups.indexOf(phase.shortdate) == -1)
+                   - link = "/event/"+phase.shortdate
+                   - pastdate = ""
+                   ul
+                      li
+                         - if(moment(phase.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                            - pastdate = "pastdate"
+                            span(class="icon-thumbs-up-1")
+                         a(href=link class=pastdate)= phase.shortdate
+                         - nodups.push(phase.shortdate)
+
+  #third.container
+    if third && third!=null && third.length > 0
+        div(id="ctl00_Div2"  class="row roundHdr")
+          h1= 'Third Place'
+          - nodups = []
+          - each phase in third 
+               - if(nodups.indexOf(phase.shortdate) == -1)
+                   - link = "/event/"+phase.shortdate
+                   - pastdate = ""
+                   ul
+                      li
+                         - if(moment(phase.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                            - pastdate = "pastdate"
+                            span(class="icon-thumbs-up-1")
+                         a(href=link class=pastdate)= phase.shortdate
+                         - nodups.push(phase.shortdate)
+                   
+  #finals.container
+        div(id="ctl00_Div2"  class="row roundHdr")
+          h1= 'FINAL'
+          - nodups = []
+          - each phase in finals 
+               - if(nodups.indexOf(phase.shortdate) == -1)
+                   - link = "/event/"+phase.shortdate
+                   - pastdate = ""
+                   ul
+                      li
+                         - if(moment(phase.shortdate).diff(moment(now).subtract('days', 1)) < 0)
+                            - pastdate = "pastdate"
+                            span(class="icon-thumbs-up-1")
+                         a(href=link class=pastdate)= phase.shortdate
+                         - nodups.push(phase.shortdate)

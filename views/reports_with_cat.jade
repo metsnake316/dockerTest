@@ -1,0 +1,631 @@
+extends layout
+
+block content
+	div(class="container login marginbottom")
+		h1= 'Reports.'
+		p Here are the reports that an administrator can generate and build a portfolio with. Please note that reports can only be generated using 
+			span
+				b="Chrome or Firefox "
+			span browsers.
+
+			- var now = (new Date())
+			- now = (now.getMonth() + 1) + "/" + now.getDate() + "/" + now.getFullYear()
+		- var selResultsMoney = resultsMoney
+		- var checkedstrMoney = false;
+		- if(selResultsMoney !=null && selResultsMoney.length>0)
+			- checkedstrMoney = true
+		- var selResultsOrders = resultsOrders
+		- var checkedstrOrders = false;
+		- if(selResultsOrders !=null && selResultsOrders.length>0)
+			- checkedstrOrders = true
+		- var selResultsShares = resultsShares
+		- var checkedstrShares = false;
+		- if(selResultsShares !=null && selResultsShares.length>0)
+			- checkedstrShares = true
+		- var selResultsInsuff = resultsInsuff
+		- var checkedstrInsuff = false;
+		- if(selResultsInsuff !=null && selResultsInsuff.length>0)
+			- checkedstrInsuff = true
+		form(action="reportSelect", method="post")
+			div(class="buttons")
+				select(name="reportSelect" type="text" id="reportSelect" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" placeholder="Select Report")
+					option(value="reportNone",style="font-weight:bold")="Select A Report..."
+					option(value="reportMoney" selected=(checkedstrMoney===true ? "selected" : undefined))="Savings"
+					option(value="reportOrders" selected=(checkedstrOrders===true ? "selected" : undefined))="Orders"
+					option(value="reportShares" selected=(checkedstrShares===true ? "selected" : undefined))="Inventory"
+					option(value="reportInsuff" selected=(checkedstrInsuff===true ? "selected" : undefined))="Insufficient Inventory"
+				div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+					div(class="arrow-up")
+					div(class="arrow-down")
+		script.
+			window.onload = function() {
+			$('#reportMoney').hide();
+			$('#reportShares').hide();
+			$('#reportOrders').hide();
+			$('#reportInsuff').hide();
+
+			/*var resultsMoney = "#{resultsMoney}";
+			var resultsOrders = "#{resultsOrders}";
+			var resultsShares = "#{resultsShares}";
+			var resultsInsuff = "#{resultsInsuff}";
+			console.log("resultsOrders: " + resultsOrders.length);
+			console.log("resultsShares: " + resultsShares.length);
+			console.log("resultsMoney: " + resultsMoney.length);
+			console.log("resultsInsuff: " + resultsInsuff.length);*/
+			var eSelect = document.getElementById('reportSelect');
+			console.debug("selected: " + $('#reportSelect').val());
+
+			if(eSelect.selectedIndex === 1 || $('#reportSelect').val() == 'reportMoney') {
+				console.log("resultsMoney inside");
+				$('#reportMoney').show();
+				$('#reportShares').hide();
+				$('#reportOrders').hide();
+				$('#reportInsuff').hide();
+			} else if(eSelect.selectedIndex === 2 || $('#reportSelect').val() == 'reportOrders') {
+				console.log("resultsOrders inside");
+				$('#reportOrders').show();
+				$('#reportShares').hide();
+				$('#reportMoney').hide();
+				$('#reportInsuff').hide();
+			} else if(eSelect.selectedIndex === 3 || $('#reportSelect').val() == 'reportShares') {
+				console.log("resultsShares inside");
+				$('#reportShares').show();
+				$('#reportMoney').hide();
+				$('#reportOrders').hide();
+				$('#reportInsuff').hide();
+			} else if(eSelect.selectedIndex === 4 || $('#reportSelect').val() == 'reportInsuff') {
+				console.log("resultsInsuff inside");
+				$('#reportInsuff').show();
+				$('#reportShares').hide();
+				$('#reportOrders').hide();
+				$('#reportMoney').hide();
+			} else if(eSelect.selectedIndex === 0 || $('#reportSelect').val() == 'reportNone') {
+				console.log("result None inside");
+				$('#reportInsuff').hide();
+				$('#reportShares').hide();
+				$('#reportOrders').hide();
+				$('#reportMoney').hide();
+			}
+
+				eSelect.onchange = function() {
+					if(eSelect.selectedIndex === 1 || $('#reportSelect').val() == 'reportMoney') {
+						console.log("resultsMoney inside");
+						$('#reportMoney').show();
+						$('#reportShares').hide();
+						$('#reportOrders').hide();
+						$('#reportInsuff').hide();
+					} else if(eSelect.selectedIndex === 2 || $('#reportSelect').val() == 'reportOrders') {
+						console.log("resultsOrders inside");
+						$('#reportOrders').show();
+						$('#reportShares').hide();
+						$('#reportMoney').hide();
+						$('#reportInsuff').hide();
+					} else if(eSelect.selectedIndex === 3 || $('#reportSelect').val() == 'reportShares') {
+						console.log("resultsShares inside");
+						$('#reportShares').show();
+						$('#reportMoney').hide();
+						$('#reportOrders').hide();
+						$('#reportInsuff').hide();
+					}else if(eSelect.selectedIndex === 4 || $('#reportSelect').val() == 'reportInsuff') {
+						console.log("resultsInsuff inside");
+						$('#reportInsuff').show();
+						$('#reportShares').hide();
+						$('#reportOrders').hide();
+						$('#reportMoney').hide();
+					} else if(eSelect.selectedIndex === 0 || $('#reportSelect').val() == 'reportNone') {
+						console.log("result None inside");
+						$('#reportInsuff').hide();
+						$('#reportShares').hide();
+						$('#reportOrders').hide();
+						$('#reportMoney').hide();
+					}
+				}
+			}
+		div(class="reportSlot") &nbsp;
+		div
+			div(class="reportMoney results", id="reportMoney")
+				div(style="/*background-color: #3d9dcb; height: 2px; margin-bottom: 30px; margin-top: 30px;*/")
+				h4="Shares Savings report Upload."
+				p="You can now retrieve a report of the savings each lab has made over a period of time per reagent category."
+				- var datefrom_money = datefromMoney
+				- var dateto_money = datetoMoney
+				- var file_money = "reportMoney_" + datefrom_money + "_to_" + dateto_money + ".pdf"
+				- var message_fail_share = "Unfortunately we could not generate the report within the time frame chosen. Please try again with new dates."
+				- var message_success_money = "Success! Your report has been generated for savings requested between " + datefrom_money + " and " + dateto_money + " then automatically downloaded on your computer if you are logged in on a desktop/laptop."
+				- if(datefromMoney == null || datefromMoney == undefined || datefromMoney == "")
+					- datefrom_money = "all"
+					- dateto_money = ""
+					- message_success_money = "Success! Your report has been generated for ALL savings and automatically downloaded in your computer."
+					- file_money = "reportMoney_all.pdf" 
+				if (addMessageMoney == 'failure')
+					div(class="alert alert-danger")!= message_fail_share
+				if (addMessageMoney == 'success')
+					div(class="alert alert-success fade in alert-dismissable")!= message_success_money
+				div
+					form(action="reportMoney", method="post")
+						div(class="buttons")
+							label(style="width: 100px;")="Date From"
+							input(name="reportDateFromMoney" style="margin-bottom:10px" type="text" id="reportDateFromMoney" class="form-control")
+							
+							label(style="width: 100px;")="Date To"
+							input(name="reportDateToMoney" style="margin-bottom:10px" type="text" id="reportDateToMoney" class="form-control")
+
+							label(style="width: 100px;")="Lab"
+							select(name="reportLabMoney" type="text" id="reportLabMoney" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" placeholder="Lab")
+								option(value="all")="all"
+								if(labs != undefined)
+									- var ob = labs
+									- for(var prop in ob)
+										- var lab = ob[prop].labname
+										option(value=lab) #{lab}
+							div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+								div(class="arrow-up")
+								div(class="arrow-down")
+							label(style="width: 100px;")="Show:"
+							br
+							label(style="width: 65px;")="Reagent"
+							input(type="checkbox" name="reportAgentMoney" id="reportAgentMoney" value="agent")
+							label(style="width: 55px; margin-left: 20px;")="Vendor"
+							input(type="checkbox" name="reportVendorMoney" id="reportVendorMoney" value="vendor")
+							label(style="width: 68px; margin-left: 20px;")="Catalog#"
+							input(type="checkbox" name="reportCatalogMoney" id="reportCatalogMoney" value="catalogNumber")
+							div(style="max-width:100%; margin-top: 20px;")
+								button.btn.btn-success.btn-lg.btn-block(type="submit",value="Report",name="submit", style="max-width: 80%;width: 80%;") Get Savings
+								img(src="images/ship.png", alt="The Lab", title="Lab", style="border-width:0px; width: 50px; margin-top: -50px;float:right")
+						if(resultsMoney != null && resultsMoney !="")
+							script(type="text/javascript" src="/javascripts/jspdf.js")
+							script(type="text/javascript" src="/javascripts/FileSaver.js")
+							script.
+								var ob = "#{resultsMoney}"
+								ob = ob.replace(/&lt;/g,"<");
+								ob = ob.replace(/&gt;/g,">");
+								var pdf = new jsPDF('l', 'pt', 'ledger');
+								var pdf2 = new jsPDF('l', 'pt', 'ledger');
+								source = ob;
+								specialElementHandlers = {
+									'#bypassme': function(element, renderer) {
+									return true;
+								}
+								};
+								margins = {
+									top: 30,
+									bottom: 30,
+									left: 40,
+									right: 40,
+									width: 622
+								};
+								pdf.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf.output('dataurlnewwindow');
+								}
+
+								}
+								, margins);	
+								pdf2.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf2.save("#{file_money}");
+								}
+								}
+								, margins);
+							- resultsMoney = ""
+					script.
+						$(window).scrollTop($('.reportMoney').offset().top).scrollLeft($('.reportMoney').offset().left);
+			div(class="reportOrders results", id="reportOrders")
+				div(style="/*background-color: #3d9dcb; height: 2px; margin-bottom: 30px; margin-top: 30px;*/")
+				h4="Orders report Upload."
+				p="You can now retrieve a report of all orders requested."
+				- var datefrom_orders = datefromOrders
+				- var dateto_orders = datetoOrders
+				- var file_orders = "reportOrders_" + datefrom_orders + "_to_" + dateto_orders + ".pdf"
+				- var message_fail_order = "Unfortunately we could not generate the report within the time frame chosen. Please try again with new dates."
+				- var message_success_order = "Success! Your report has been generated for orders between " + datefrom_orders + " and " + dateto_orders + " then automatically downloaded in your computer."
+				- if(datefromOrders == null || datefromOrders == undefined || datefromOrders == "")
+					- datefrom_orders = "all"
+					- dateto_orders = ""
+					- message_success_order = "Success! Your report has been generated for ALL orders and automatically downloaded on your computer if you are logged in on a desktop/laptop."
+					- file_orders = "reportOrders_all.pdf" 
+				if (addMessageOrders == 'failure')
+					div(class="alert alert-danger")!= message_fail_order
+				if (addMessageOrders == 'success')
+					div(class="alert alert-success fade in alert-dismissable")!= message_success_order
+				div
+					form(action="reportOrders", method="post")
+						div(class="buttons")
+							label(style="width: 100px;")="Date From"
+							input(name="reportDateFromOrders" style="margin-bottom:10px" type="text" id="reportDateFromOrders" class="form-control")
+							
+							label(style="width: 100px;")="Date To"
+							input(name="reportDateToOrders" style="margin-bottom:10px" type="text" id="reportDateToOrders" class="form-control")
+							
+							label(style="width: 150px;")="Reagent Category"
+							select(name="reportCategoryOrders" type="text" id="reportCategoryOrders" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" 
+							placeholder="Category")
+								option(value="all")="all"
+								if(categories != undefined)
+									- var ob = categories
+									- for(var prop in ob)
+										- var cat = ob[prop].category
+										option(value=cat) #{cat}
+							div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+								div(class="arrow-up")
+								div(class="arrow-down")
+							
+							label(style="width: 100px;")="Lab"
+							select(name="reportLabOrders" type="text" id="reportLabOrders" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" placeholder="Lab")
+								option(value="all")="all"
+								if(labs != undefined)
+									- var ob = labs
+									- for(var prop in ob)
+										- var lab = ob[prop].labname
+										option(value=lab) #{lab}
+							div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+								div(class="arrow-up")
+								div(class="arrow-down")
+							div(style="max-width:100%; margin-top: 20px;")
+								button.btn.btn-success.btn-lg.btn-block(type="submit",value="Report",name="submit", style="max-width: 80%;width: 80%;") Get Orders
+								img(src="images/ship.png", alt="The Lab", title="Lab", style="border-width:0px; width: 50px; margin-top: -50px; float:right")
+						span(id="triggerSafariOrder")
+						if(resultsOrders != null && resultsOrders !="")
+							script(type="text/javascript" src="/javascripts/jspdf.js")
+							script(type="text/javascript" src="/javascripts/FileSaver.js")
+							script.
+								var ob = "#{resultsOrders}"
+								ob = ob.replace(/&lt;/g,"<");
+								ob = ob.replace(/&gt;/g,">");
+
+								var pdf = new jsPDF('l', 'pt', 'ledger');
+								var pdf2 = new jsPDF('l', 'pt', 'ledger');
+								// source can be HTML-formatted string, or a reference
+								// to an actual DOM element from which the text will be scraped.
+								source = ob;
+
+								// we support special element handlers. Register them with jQuery-style 
+								// ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+								// There is no support for any other type of selectors 
+								// (class, of compound) at this time.
+								specialElementHandlers = {
+									// element with id of "bypass" - jQuery style selector
+									'#bypassme': function(element, renderer) {
+									// true = "handled elsewhere, bypass text extraction"
+									return true;
+								}
+								};
+								margins = {
+									top: 30,
+									bottom: 30,
+									left: 40,
+									right: 40,
+									width: 622
+								};
+
+								// all coords and widths are in jsPDF instance's declared units
+								// 'inches' in this case
+								pdf.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								// dispose: object with X, Y of the last line add to the PDF 
+								//          this allow the insertion of new lines after html
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									/*var binaryData = [];
+									binaryData.push(pdf.output());
+									var blob = new Blob(binaryData, {type: "application/pdf"});
+									window.open(window.URL.createObjectURL(blob),'_blank');*/
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf.output('dataurlnewwindow');
+								}
+								
+								}
+								, margins);		
+								pdf2.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								// dispose: object with X, Y of the last line add to the PDF 
+								//          this allow the insertion of new lines after html
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									/*var binaryData = [];
+									binaryData.push(pdf.output());
+									var blob = new Blob(binaryData, {type: "application/pdf"});
+									window.open(window.URL.createObjectURL(blob),'_blank');*/
+									pdf2.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf2.save("#{file_orders}");
+								}
+								
+								}
+								, margins);						
+							- resultsOrders = ""
+					script.
+						$(window).scrollTop($('.reportOrders').offset().top).scrollLeft($('.reportOrders').offset().left);
+			div(class="reportShares results", id="reportShares")
+				div(style="/*background-color: #3d9dcb; height: 2px; margin-bottom: 30px; margin-top: 30px;*/")
+				h4="Inventory report Upload."
+				p="You can now retrieve a report of all shares uploaded."
+				- var datefrom_shares = datefromShares
+				- var dateto_shares = datetoShares
+				- var file_shares = "reportShares_" + datefrom_shares + "_to_" + dateto_shares + ".pdf"
+				- var message_fail_share = "Unfortunately we could not generate the report within the time frame chosen. Please try again with new dates."
+				- var message_success_share = "Success! Your report has been generated for inventory requested between " + datefrom_shares + " and " + dateto_shares + " then automatically downloaded on your computer if you are logged in on a desktop/laptop."
+				- if(datefromShares == null || datefromShares == undefined || datefromShares == "")
+					- datefrom_shares = "all"
+					- dateto_shares = ""
+					- message_success_share = "Success! Your report has been generated for ALL inventory and automatically downloaded in your computer."
+					- file_shares = "reportShares_all.pdf" 
+				if (addMessageShares == 'failure')
+					div(class="alert alert-danger")!= message_fail_share
+				if (addMessageShares == 'success')
+					div(class="alert alert-success fade in alert-dismissable")!= message_success_share
+				div
+					form(action="reportShares", method="post")
+						div(class="buttons")
+							label(style="width: 100px;")="Date From"
+							input(name="reportDateFrom" style="margin-bottom:10px" type="text" id="reportDateFrom" class="form-control")
+							
+							label(style="width: 100px;")="Date To"
+							input(name="reportDateTo" style="margin-bottom:10px" type="text" id="reportDateTo" class="form-control")
+							
+							label(style="width: 150px;")="Reagent Category"
+							select(name="reportCategory" type="text" id="reportCategory" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" 
+							placeholder="Category")
+								option(value="all")="all"
+								if(categories != undefined)
+									- var ob = categories
+									- for(var prop in ob)
+										- var cat = ob[prop].category
+										option(value=cat) #{cat}
+							div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+								div(class="arrow-up")
+								div(class="arrow-down")
+							div(style="max-width:100%; margin-top: 20px;")
+								button.btn.btn-success.btn-lg.btn-block(type="submit",value="Report",name="submit", style="max-width: 80%;width: 80%;") Get Shares
+								img(src="images/ship.png", alt="The Lab", title="Lab", style="border-width:0px; width: 50px; margin-top: -50px;float:right")
+						if(resultsShares != null && resultsShares !="")
+							script(type="text/javascript" src="/javascripts/jspdf.js")
+							script(type="text/javascript" src="/javascripts/FileSaver.js")
+							script.
+								var ob = "#{resultsShares}"
+								ob = ob.replace(/&lt;/g,"<");
+								ob = ob.replace(/&gt;/g,">");
+
+								var pdf = new jsPDF('l', 'pt', 'ledger');
+								var pdf2 = new jsPDF('l', 'pt', 'ledger');
+								// source can be HTML-formatted string, or a reference
+								// to an actual DOM element from which the text will be scraped.
+								source = ob;
+
+								// we support special element handlers. Register them with jQuery-style 
+								// ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+								// There is no support for any other type of selectors 
+								// (class, of compound) at this time.
+								specialElementHandlers = {
+									// element with id of "bypass" - jQuery style selector
+									'#bypassme': function(element, renderer) {
+									// true = "handled elsewhere, bypass text extraction"
+									return true;
+								}
+								};
+								margins = {
+									top: 30,
+									bottom: 30,
+									left: 40,
+									right: 40,
+									width: 622
+								};
+
+								// all coords and widths are in jsPDF instance's declared units
+								// 'inches' in this case
+								pdf.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								// dispose: object with X, Y of the last line add to the PDF 
+								//          this allow the insertion of new lines after html
+								
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									/*var binaryData = [];
+									binaryData.push(pdf.output());
+									var blob = new Blob(binaryData, {type: "application/pdf"});
+									window.open(window.URL.createObjectURL(blob),'_blank');*/
+									//var blob = pdf.output();
+									//window.open(window.URL.createObjectURL(blob),'_blank');
+
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf.output('dataurlnewwindow');
+									//pdf.save("#{file_shares}");
+								}
+
+								}
+								, margins);	
+								pdf2.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								// dispose: object with X, Y of the last line add to the PDF 
+								//          this allow the insertion of new lines after html
+								
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									/*var binaryData = [];
+									binaryData.push(pdf.output());
+									var blob = new Blob(binaryData, {type: "application/pdf"});
+									window.open(window.URL.createObjectURL(blob),'_blank');*/
+									//var blob = pdf.output();
+									//window.open(window.URL.createObjectURL(blob),'_blank');
+
+									//pdf2.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf2.save("#{file_shares}");
+								}
+
+								}
+								, margins);
+							- resultsShares = ""
+					script.
+						$(window).scrollTop($('.reportShares').offset().top).scrollLeft($('.reportShares').offset().left);
+				script.
+					$(document).ready(function(){
+						//$.mask.definitions['~']='[+-]';
+						//$("#eyescript").mask("~9.99 ~9.99 999");
+						$("#reportDateFrom").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						$("#reportDateTo").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						$("#reportDateFromOrders").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						$("#reportDateToOrders").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						$("#reportDateFromMoney").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						$("#reportDateToMoney").mask("99-99-9999",{placeholder:"mm-dd-yyyy"});
+						
+					});
+		div(style="/*float: left; width: 100%;*/")
+			div(class="reportInsuff results", id="reportInsuff")
+				div(style="/*background-color: #3d9dcb; height: 2px; margin-bottom: 30px; margin-top: 30px;*/")
+				h4="Insufficient Reagents report Upload."
+				p="You can now retrieve a report of the low inventories in each lab."
+				- var message_fail_insuff = "Unfortunately we could not generate the report as there is no data retrieved. Please try again with a new lab. Or better yet: <b>There are no insufficient inventory to report at the moment</b>."
+				- var message_success_insuff = "Success! Your report has been generated for low inventories. It has been automatically downloaded on your computer if you are logged in on a desktop/laptop."
+				if (addMessageInsuff == 'failure')
+					div(class="alert alert-danger")!= message_fail_insuff
+				if (addMessageInsuff == 'success')
+					div(class="alert alert-success fade in alert-dismissable")!= message_success_insuff
+				div
+					form(action="reportInsuff", method="post")
+						div(class="buttons")
+							label(style="width: 100px;")="Lab"
+							select(name="reportLabInsuff" type="text" id="reportLabInsuff" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" placeholder="Lab")
+								option(value="all")="all"
+								if(labs != undefined)
+									- var ob = labs
+									- for(var prop in ob)
+										- var lab = ob[prop].labname
+										option(value=lab) #{lab}
+							div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+								div(class="arrow-up")
+								div(class="arrow-down")
+							label(style="width: 100px;")="Show:"
+							br
+							label(style="width: 65px;")="Reagent"
+							input(type="checkbox" name="reportAgentInsuff" id="reportAgentInsuff" value="agent")
+							label(style="width: 55px; margin-left: 20px;")="Vendor"
+							input(type="checkbox" name="reportVendorInsuff" id="reportVendorInsuff" value="vendor")
+							label(style="width: 68px; margin-left: 20px;")="Catalog#"
+							input(type="checkbox" name="reportCatalogInsuff" id="reportCatalogInsuff" value="catalogNumber")
+							div(style="max-width:100%; margin-top: 20px;")
+								button.btn.btn-success.btn-lg.btn-block(type="submit",value="Report",name="submit", style="max-width: 80%;width: 80%;") Get Insufficient Reagents
+								img(src="images/ship.png", alt="The Lab", title="Lab", style="border-width:0px; width: 50px; margin-top: -50px;float:right")
+						if(resultsInsuff != null && resultsInsuff !="")
+							- var file_insuff = "reportInsufficient_"+labinsuff+".pdf" 
+							script(type="text/javascript" src="/javascripts/jspdf.js")
+							script(type="text/javascript" src="/javascripts/FileSaver.js")
+							script.
+								var ob = "#{resultsInsuff}"
+								ob = ob.replace(/&lt;/g,"<");
+								ob = ob.replace(/&gt;/g,">");
+								var pdf = new jsPDF('l', 'pt', 'ledger');
+								var pdf2 = new jsPDF('l', 'pt', 'ledger');
+								source = ob;
+								specialElementHandlers = {
+									'#bypassme': function(element, renderer) {
+									return true;
+								}
+								};
+								margins = {
+									top: 30,
+									bottom: 30,
+									left: 40,
+									right: 40,
+									width: 622
+								};
+								pdf.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf.output('dataurlnewwindow');
+								}
+
+								}
+								, margins);	
+								pdf2.fromHTML(
+									source, // HTML string or DOM elem ref.
+									margins.left, // x coord
+									margins.top, {// y coord
+									'width': margins.width, // max width of content on PDF
+									'elementHandlers': specialElementHandlers
+								},
+								function(dispose) {
+								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+								{
+									pdf.output('dataurlnewwindow');
+								}
+								else
+								{
+									pdf2.save("#{file_insuff}");
+								}
+								}
+								, margins);
+							- resultsInsuff = ""
+					script.
+						$(window).scrollTop($('.reportInsuff').offset().top).scrollLeft($('.reportInsuff').offset().left);

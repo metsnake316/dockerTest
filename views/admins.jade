@@ -1,0 +1,359 @@
+extends layout
+
+block content
+	- var adminTypecheck = adminType
+	- var fadesections = ""
+	- var hidefadesections = ""
+	- var uploadtext = ""
+	- var slide = "moveFromLeft"
+	- var graphdata = report_data
+	- if(doing == "upload")
+		- slide = ""
+		- fadesections = "fadesections"
+		- hidefadesections = "hidefadesections"
+		- uploadtext = "uploadtext"
+
+	- var adjust = "adjustpadding"
+
+	div(id="langText" class="displaynone")!= lang
+	div(id="ios-light")
+		center
+			h1= i18n.__("admins.pop.title")
+			p(id="orderText")
+			div!= i18n.__("admins.pop.subtitle")
+	div(class="shade" id="shade")
+	div(class="shade-light" id="shade-light")
+	div(class="zoomnow container login marginbottom margintop container2 botbottom " + slide)
+		div
+			a(name="upload")
+		div(class="share-container2 adjustpaddingrightandwidth2 float-left")
+			h1
+				span(class="fa fa-user-plus lightyokecolor")
+				span!= i18n.__("admins.title") + " <span class='admin-title'>[" + currentlabname + "] </span>"
+				span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+			if(isLoggedInAdmin > 0)
+				- if(doing == "upload")
+					div(class="threepointsmobile")
+				h3(class=uploadtext)
+					span(class="fa fa-upload admin-upload")
+					span= i18n.__("shares.admin.title")
+				p= i18n.__("shares.admin.subtitle")
+				form(id="uploadForm", enctype="multipart/form-data", action="admins", method="post")
+					input(class="displaynone-impt", type="file" name="file",id="file", class="inputfile inputfile-1", data-multiple-caption="files selected")
+					label.shadow.admin-file-upload(for="file")
+						svg(xmlns="http://www.w3.org/2000/svg", width="20", height="17", viewBox="0 0 20 17")
+							path(d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z")
+						span= i18n.__("shares.admin.file")
+					div(class="buttons")
+						button.btn.btn-success.btn-lg.btn-block.shadow(type="submit",value="Upload",name="submit")= i18n.__("shares.admin.button")
+			if(nosuccess == "missingdata")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4= i18n.__("shares.admin.error5")
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if(nosuccess == "missingcolumn")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4= i18n.__("shares.admin.error6")
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if(nosuccess == "databaserror")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4= i18n.__("shares.admin.error1")
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if(nosuccess == "nofile")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4(class="paddingtop-10")= i18n.__("shares.admin.error2")
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if(nosuccess == "nodata")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4(class="paddingtop-10")= i18n.__("shares.admin.error3")
+								span(class="admin-name")=" " + spreadname
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if(nosuccess == "generic")
+				div
+					div(id="uploaderror", class="table-responsive alert alert-danger-report margintop-25")
+						span(class="textalign-center")
+							h4(class="paddingtop-10")= i18n.__("shares.admin.error4")
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			if json
+				div(id="results", class="margintop")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")
+							span(class="textalign-center")
+								h3(class="paddingtop-10")= i18n.__("shares.admin.success")
+									span(class="admin-name")=" " + spreadname                   
+							table(id="rankTblload" class="table rankTbl animated fadeIn")
+								thead
+									tr(class="you info-best font-bold")
+										td(class="desktabonly")= 'id '
+										td(class="wrapped")!= i18n.__("shares.table.reagent")
+										td= i18n.__("shares.table.vendor")
+										td= i18n.__("shares.table.catalog")
+										td= i18n.__("shares.table.location")
+								tbody
+									-var ob = json
+									-for(var prop in ob)
+										tr
+											td(class="desktabonly") #{prop}
+											td(class="wrapped2") #{ob[prop].name_of_reagent}
+											td(class="wrapped2") #{ob[prop].vendor}
+											td(class="wrapped2") #{ob[prop].catalog_number}
+											td(class="wrapped2") #{ob[prop].location}
+				script="$(window).scrollTop($('#uploadForm').offset().top).scrollLeft($('#uploadForm').offset().left);"
+			div(class="threepointssep")
+			- if(doing == "upload")
+			div(id="qtyComp", class="admin-qty")
+				h3
+					span(class="fa fa-bar-chart admin-qty-chart")
+					span!= i18n.__("admins.qty.title")
+				- if(report_data != null && report_data.length >0)
+					p!= i18n.__("admins.qty.subtitle")
+					div(class="ct-chart ct-perfect-fourth")
+					div(id="tooltips", class="labColor") &nbsp;
+				- if(report_data != null && report_data.length==0)
+					h5!= i18n.__("admins.qty.subtitle1")
+
+				- if(report_data != null && report_data.length >0)
+					-var ob2 = report_data
+					- var array_rows2 = []
+					- var array_values2 = ""
+					- var array_values3 = ""
+					-for(var prop in ob2)
+						- array_rows2 = array_rows2 + ob2[prop].emailinsuff + "|"
+						- array_values2 = array_values2 + ob2[prop].insuff + "|"
+						- array_values3 = array_values3 + ob2[prop].noninsuff + "|"
+					script(type="text/javascript" src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js")
+					script.
+						var var_array_rows2 = "#{array_rows2}", var_array_values2 = "#{array_values2}", var_array_values3 = "#{array_values3}", var_dot_selected = "#{i18n.__("dot.selected")}";
+					script(type="text/javascript" src="/js/admins-chartnotes-utils.js")
+
+			div(class="threepointssep mobileonly3")
+
+		div(class="share-container2 admintop " + fadesections)
+			div(class="radiosearch keysearchs admin-key")
+				div(class="float-left")
+					input(type="radio" name="search" value="keysearch" id="keyradio")
+					label(for="keyradio", class="float-left", onClick="radioclick()")
+						span
+							h3 #{i18n.__("admins.radio.orders")}
+					div(class="checking shadow margintop-15", onClick="radioclick()")
+				div(class="margincatalogradio")
+					input(type="radio" name="search" value="catalogsearch" id="catalogradio" class="marginleft-15")
+					label(for="catalogradio", class="catalogradio admin-catalog", onClick="radiocatclick()")
+						span
+							h3 #{i18n.__("admins.radio.reagents")}
+					div(class="checkingcatalog shadow top-15", onClick="radiocatclick()")
+
+			div(id="table1")
+				if(myshares == "")
+					span= i18n.__("admins.subtitle")
+				if(mysharesrequest != null && mysharesrequest.length>0)
+					- var output = mysharesrequest.filter(function(x){return x.status!="fulfilled" && x.insufficient !=0});
+					p
+						- var requestIntro = output.length + i18n.__("admins.intro5") + " <span class='isnewcolor fa fa-square'></span>"
+						- if(output.length == 0)
+							- requestIntro = i18n.__("admins.intro")
+						span!= requestIntro
+						span= i18n.__("admins.intro1")
+						- var totalrequestIntro = "" + mysharesrequest.length + i18n.__("admins.intro2")
+						- if(mysharesrequest.length == 0)
+							- totalrequestIntro = i18n.__("admins.intro3")
+						span!= totalrequestIntro + i18n.__("admins.intro4")
+					div(id="results2", class="resultsshadow")
+						div(id="ctl00_Div2" class="row rank")
+							div(class="table-responsive")
+								- var animatetable=" animated fadeIn"
+								- if(pos!=null)
+									- animatetable=""         
+								table(id="rankTblreqshares" class="table rankTbl"+animatetable)
+									thead
+										tr(class="you info-best font-bold")
+											th(class="displaynone")="pos"
+											th(class="wrapped")!= i18n.__("shares.table.reagent")
+											th(class="desktabonly")= i18n.__("shares.table.vendor")
+											th(class="desktabonly")= i18n.__("shares.table.catalog")
+											th(class="")= i18n.__("shares.table.requestor")
+											th(class="")= i18n.__("shares.table.email")
+											th= i18n.__("shares.table.date")
+											th(title=i18n.__("admins.table.header.cancelorder"))= i18n.__("shares.table.delete")
+											th(title="Fulfill Order")= i18n.__("shares.table.fulfill")
+									tbody
+										-var ob = mysharesrequest
+										-for(var prop in ob)
+											- var canc = i18n.__("admins.table.x") + ob[prop].agent
+											- var full = i18n.__("admins.table.f") + ob[prop].agent
+											- var n = ob[prop].status
+											- var d = new Date(ob[prop].date)
+											- d = d.toLocaleDateString("en-US")
+											- var isnew = ""
+											- var checkedstr = false
+											- var checkedfilledstr = false
+											- if(n != "fulfilled")
+												- isnew = "isnew"
+											- var insuff = parseInt(ob[prop].insufficient)
+											- if(insuff == 0)
+												- isnew = "backColorinsuff"
+												- checkedstr = true
+												- canc = i18n.__("admins.table.repl") + ob[prop].agent
+											- var status = ob[prop].status
+											- var showcancel = ""
+											- if(status == 'fulfilled')
+												- checkedfilledstr = true
+												- showcancel = " displaynone"
+												- full = i18n.__("admins.table.revert") + ob[prop].agent
+											- var lab = (ob[prop].lab).replace(" ","").toLowerCase();
+											- var f = "fulfill" + prop
+											- var c = "cancel" + prop
+											- var showfulfill = " "
+											- if(checkedstr===true)
+												- showfulfill = " displaynone"
+											
+											- var point2 = ""
+											- var point = ""
+											- if(pos!=null && prop == pos)
+												- if(status == 'fulfilled')
+													- point = " successful-fulfill"
+												- if(insuff == 0)
+													- point = " successful-cancel"
+												//- point = " point"
+												- point3 = " point2"
+											
+											tr(class=isnew)
+												td(class="displaynone") #{prop}
+												td(class="wrapped2" + point) #{ob[prop].agent}
+												td(class="wrapped2 desktabonly") #{ob[prop].vendor}
+												td(class="wrapped2 desktabonly") #{ob[prop].catalognumber}
+												td(class="wrapped2") #{ob[prop].requestoremail}
+												td(class="wrapped2") #{ob[prop].email}
+												td #{d}
+												td(class="admin-cancel textalign-center-all" title=canc)
+													form(action="/admincancelshare" method="post")
+														div(class="checkboxThree1" + showcancel)
+															input(type="checkbox" id=c name="cancel" value="cancel" class="cancel admin-fulfill" checked=(checkedstr===true ? "checked" : undefined))
+															label(class="labelcheck1 shadow" for=c)
+														input(type="hidden" class="agentid" name="agent" value=ob[prop].agent)
+														input(type="hidden" class="labid" name="lab" value=ob[prop].lab)
+														input(type="hidden" class="vendorid" name="vendor" value=ob[prop].vendor)
+														input(type="hidden" class="catalogid" name="catalognumber" value=ob[prop].catalognumber)
+														input(type="hidden" class="owneremailid" name="email" value=ob[prop].email)
+														input(type="hidden" class="requestorid" name="requestoremail" value=ob[prop].requestoremail)
+														input(type="hidden" name="date" value=d)
+														input(type="hidden" name="table" value=currentlabname.replace(" ","").toLowerCase() + "_orders")
+														input(type="hidden" name="adminType" value="laborders")
+														input(type="hidden" name="pos" value=prop)
+												td(class="admin-cancel textalign-center-all "+point3 title=full)
+													form(action="/fulfillshare" method="post")
+														
+														div(class="checkboxThree1" + showfulfill)
+															input(type="checkbox" id=f name="fulfill" value="fulfill" class="fulfill admin-fulfill" checked=(checkedfilledstr===true ? "checked" : undefined))
+															label(class="labelcheck1 shadow" for=f)
+														input(type="hidden" class="agentid" name="agent" value=ob[prop].agent)
+														input(type="hidden" class="labid" name="lab" value=ob[prop].lab)
+														input(type="hidden" class="owneremailid" name="owneremail" value=ob[prop].email)
+														input(type="hidden" class="vendorid" name="vendor" value=ob[prop].vendor)
+														input(type="hidden" class="catalogid" name="catalognumber" value=ob[prop].catalognumber)
+														input(type="hidden" class="requestorid" name="requestoremail" value=ob[prop].requestoremail)
+														input(type="hidden" name="email" value=ob[prop].email)
+														input(type="hidden" name="date" value=d)
+														input(type="hidden" name="table" value=currentlabname.replace(" ","").toLowerCase() + "_orders")
+														input(type="hidden" name="adminType" value="laborders")
+														input(type="hidden" name="pos" value=prop)
+
+					div(class="threepointssep mobileonly3")
+				else
+					p!= i18n.__("admins.noorders.intro")
+			div(id="table2")
+				if(myshares == "")
+					span= i18n.__("admins.subtitle2")
+				if(myshares != "")
+					p!= i18n.__("admins.none.subtitle")
+					div(id="results2", class="resultsshadow")
+						div(id="ctl00_Div2" class="row rank")
+							div(class="table-responsive")
+								- var animatetable2=" animated fadeIn"
+								- if(pos2!=null)
+									- animatetable2=""
+								table(id="rankTblshares" class="table rankTbl" + animatetable2)
+									thead
+										tr(class="you info-best font-bold")
+											th(class="displaynone")!="pos"
+											th(class="wrapped")!= i18n.__("shares.table.reagent")
+											th(class="desktabonly")= i18n.__("shares.table.location")
+											th= i18n.__("shares.table.email")
+											th= i18n.__("shares.table.vendor")
+											th= i18n.__("shares.table.catalog")
+											th(title=i18n.__("admins.table.header.insuff"))= i18n.__("shares.table.delete")
+									tbody
+										-var ob = myshares
+										-for(var prop in ob)
+											- var c = "cancelr" + prop
+											- var status = ob[prop].status
+											- var currentqtyint = parseInt(ob[prop].currentquantity)
+											- var qtyinsufficient = ""
+											- var checkedstr = false
+											- var insuff = parseInt(ob[prop].insufficient)
+											- var d = new Date(ob[prop].date)
+											- d = d.toLocaleDateString("en-US")
+											- var canc = ob[prop].agent + i18n.__("admins.table.insuff")
+											- if(insuff == 0)
+												- qtyinsufficient = "backColorinsuff"
+												- checkedstr = true
+												- canc = i18n.__("admins.table.repl") + ob[prop].agent
+											- var point2 = ""
+											- var point4 = ""
+											- if(pos2!=null && prop == pos2)
+												- point2 = " successful-fulfill"
+												- if(insuff == 0)
+													- point2 = " successful-cancel"
+
+											tr(class=qtyinsufficient)
+												td(class="displaynone") #{prop}
+												td(class="wrapped2" + point2) #{ob[prop].agent}
+												td(class="wrapped2 desktabonly")  #{ob[prop].location}
+												td(class="wrapped2")  #{ob[prop].email}
+												td(class="wrapped2")  #{ob[prop].vendor}
+												td(class="wrapped2")  #{ob[prop].catalognumber}
+												td(class="admin-insuff textalign-center-all " + point4,  title=canc)
+													form(action="/admincancelshare" method="post")
+														div(class="checkboxThree1" + showfulfill)
+															input(type="checkbox" id=c name="cancel" value="cancel" class="cancel admin-fulfill" checked=(checkedstr===true ? "checked" : undefined))
+															label(class="labelcheck1 shadow" for=c)
+														input(type="hidden" class="agentid" name="agent" value=ob[prop].agent)
+														input(type="hidden" class="labid" name="lab" value=ob[prop].lab)
+														input(type="hidden" class="vendorid" name="vendor" value=ob[prop].vendor)
+														input(type="hidden" class="catalogid" name="catalognumber" value=ob[prop].catalognumber)
+														input(type="hidden" class="owneremailid" name="email" value=ob[prop].email)		
+														input(type="hidden" name="date" value=d)
+														input(type="hidden" name="table" value="vm2016_agentsshare")
+														input(type="hidden" name="adminType" value="labreagents")
+														input(type="hidden" name="pos2" value=prop)
+					div(class="threepointssep mobileonly3")
+				else
+					p!= i18n.__("admins.noreagents.intro")
+		div(class="slide-out-tip-div desktabonly admin-slide")
+			a(class="handle admin-content" href="last-transactions", title='#{i18n.__("admins.tip.header")}')!=Content
+			div(class="slide-container-one")
+				div(class="textalign-center")
+					span(class="zoom_controls")
+						a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+							span(class="fa fa-minus-circle")
+						a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+							span(class="fa fa-circle-o-notch")
+						a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+							span(class="fa fa-plus-circle")
+				div(class="threepointssep margintopbelow-10")
+				p(class="font-12pt")!= i18n.__("admins.tip.header")
+				div(class="slide-desc")
+					span!= i18n.__("admins.tip.desc")
+		span(class="desktabonly", id="checkdisplay")
+	script.
+		var var_admintype = "#{admintype}", var_pos = "#{pos}", var_pos2 = "#{pos2}";
+	script(type="text/javascript" src="/js/admins-utils-jump.js")

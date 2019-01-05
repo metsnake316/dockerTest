@@ -1,0 +1,482 @@
+extends layout
+
+block content
+	div(id="ios-light")
+		center
+			h1="Sharing?"
+			p(id="orderText")
+			div
+				div(id="actionorder" class="exit" style="width: 50%; float: left; background-color: rgba(138, 109, 59, 0.55);")="OK"
+				div(class="exit" id="actioncancel")="Cancel"
+	div(class="shade" id="shade")
+	div(class="shade-light" id="shade-light")
+	div(class="container login marginbottom")
+		div(style="float: left;" class="share-container")
+			h1= 'Share.'
+			if(myshares == "")
+				h4="You are currently not sharing any reagent."
+			if(mysharesrequest != null && mysharesrequest.length>0)
+				- var output = mysharesrequest.filter(function(x){return x.status=="new"});
+				h4="Fantastic."
+				p
+					- var requestIntro = output.length + " new chem(s)"
+					- if(output.length == 0)
+						- requestIntro = "No new chem"
+					span(class="labColor")!= requestIntro
+					span=" currently being requested by your colleagues. In total, "
+					- var totalrequestIntro = mysharesrequest.length + " request(s)"
+					- if(mysharesrequest.length == 0)
+						- totalrequestIntro = "No request"
+					span(class="labColor")!= totalrequestIntro 
+					span=" registered for your lab. "
+					span(class="yokeColor")!= "Cancelled orders "
+					span="are highlighted." 
+				div(id="results")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")               
+							table(id="rankTblreqshares" class="table rankTbl")
+								thead
+									tr(class="you info-best" style="font-weight: bold")
+										th(class="wrapped")!= 'Reagent'
+										th(class="desktabonly")= 'Vendor'
+										th(class="deskfullonly")= 'Catalog'
+										th(class="desktabonly")= 'Requestor'
+										th= 'Date'
+										th= 'X'
+								tbody
+									-var ob = mysharesrequest
+									-for(var prop in ob)
+										- var n = ob[prop].status
+										- var d = ob[prop].date
+										- d = d.toLocaleDateString("en-US")
+										- var isnew = ""
+										- var checkedstr = false
+										- if(n == "new")
+											- isnew = "isnew"
+										- var insuff = parseInt(ob[prop].insufficient)
+										- if(insuff == 0)
+											- isnew = "yokeBackColor"
+											- checkedstr = true
+										tr(class=isnew)
+											td(class="wrapped") #{ob[prop].agent}
+											td(class="desktabonly") #{ob[prop].vendor}
+											td(class="deskfullonly") #{ob[prop].catalognumber}
+											td(class="desktabonly") #{ob[prop].requestoremail}
+											td #{d}
+											td
+												form(action="/cancelshare" method="post")
+													input(type="checkbox" name="cancel" value="cancel" class="cancel" checked=(checkedstr===true ? "checked" : undefined))
+													input(type="hidden" name="agent" value=ob[prop].agent)
+													input(type="hidden" name="vendor" value=ob[prop].vendor)
+													input(type="hidden" name="catalognumber" value=ob[prop].catalognumber)
+													input(type="hidden" name="email" value=ob[prop].email)
+													input(type="hidden" name="requestoremail" value=ob[prop].requestoremail)
+													input(type="hidden" name="date" value=ob[prop].date)
+													input(type="hidden" name="table" value="vm2016_orders")
+							script.
+								$(document).ready(function() {
+									$('#rankTblreqshares').DataTable({"order": [[ 4, "desc" ]]});
+								});
+				div(style="background-color: #3d9dcb; height: 2px; margin-bottom: 30px; margin-top: 30px;")
+			if(myshares != "")
+				h4="You are currently sharing."
+				p="An administrator has uploaded the following reagents on your behalf. "
+					span(class="yokeColorBold")= "Insufficient quantities"
+					span=" are listed. Please have your admin refresh the quantities."
+				div(id="results")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")               
+							table(id="rankTblshares" class="table rankTbl")
+								thead
+									tr(class="you info-best" style="font-weight: bold")
+										th(class="wrapped")!= 'Reagent'
+										th= 'Vendor'
+										th= 'Catalog'
+										th= 'X'
+								tbody
+									-var ob = myshares
+									-for(var prop in ob)
+										- var currentqtyint = parseInt(ob[prop].currentquantity)
+										- var qtyinsufficient = ""
+										- var checkedstr = false
+										- var insuff = parseInt(ob[prop].insufficient)
+										- if(insuff == 0)
+											- qtyinsufficient = "yokeBackColor"
+											- checkedstr = true
+										tr(class=qtyinsufficient)
+											td(class="wrapped") #{ob[prop].agent}
+											td #{ob[prop].vendor}
+											td #{ob[prop].catalognumber}
+											td
+												form(action="/cancelshare" method="post")
+													input(type="checkbox" name="cancel" value="cancel" class="cancel" checked=(checkedstr===true ? "checked" : undefined))
+													input(type="hidden" name="agent" value=ob[prop].agent)
+													input(type="hidden" name="vendor" value=ob[prop].vendor)
+													input(type="hidden" name="catalognumber" value=ob[prop].catalognumber)
+													input(type="hidden" name="email" value=ob[prop].email)
+													input(type="hidden" name="date" value=ob[prop].date)
+													input(type="hidden" name="table" value="vm2016_agentsshare")
+							script.
+								$(document).ready(function() {
+									$('#rankTblshares').DataTable();
+								});
+		div(class="share-container adjustpadding" style="float:right;")
+			if(isLoggedInAdmin == 1)
+				a(name="upload")
+				div(class="admin")
+				h4="Admin Upload."
+				p="You can now upload a list of reagents (xcel spreadsheet) from your local computer or Google drive."
+				form(id="uploadForm", enctype="multipart/form-data", action="share", method="post")
+					input(style="display:none", type="file" name="file",id="file", class="inputfile inputfile-1", data-multiple-caption="{count} files selected")
+					label(for="file", style="width: 50%;text-align: center;border-radius: 6px;")
+						svg(xmlns="http://www.w3.org/2000/svg", width="20", height="17", viewBox="0 0 20 17")
+							path(d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z")
+						span="Choose an Excel File..."
+					div(class="buttons")
+						button.btn.btn-success.btn-lg.btn-block(type="submit",value="Upload",name="submit") Upload File
+						img(src="images/yoke5.png", alt="The Lab", title="Lab", style="border-width:0px; width: 50px; margin-top: -77px; margin-left: 300px;")
+
+			if json
+				div(id="results")
+					div(id="ctl00_Div2" class="row rank")
+						div(class="table-responsive")
+							span(style="text-align: center")
+								h3="Fantastic! You have uploaded the file: "
+									span(style="color: #3d9dcb;")=" " + spreadname                   
+							table(id="rankTblload" class="table rankTbl")
+								thead
+									tr(class="you info-best" style="font-weight: bold")
+										td(class="desktabonly")= 'id '
+										td(class="wrapped")!= 'Reagent'
+										td= 'Vendor'
+										td= 'Catalog'
+										td= 'Location'
+								tbody
+									-var ob = json
+									-for(var prop in ob)
+										tr(class="")
+											td(class="desktabonly") #{prop}
+											td(class="wrapped") #{ob[prop].name_of_reagent}
+											td #{ob[prop].vendor}
+											td #{ob[prop].catalog_number}
+											td #{ob[prop].location}
+							script.
+								$(document).ready(function() {
+									$('#rankTblload').DataTable();
+								});
+			div(style="background-color: #3d9dcb; height: 2px; margin-bottom: 0px; margin-top: 30px;")
+		div(style="float:right;", class="share-container adjustpadding")
+			script(type="text/javascript" src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js")
+
+			h3="Operational Charts."
+			form(action="chartSelect", method="post")
+				div(class="buttons")
+					select(name="chartSelect" type="text" id="chartSelect" class="form-control" style="border-color:#3d9dcb;margin-bottom:10px" placeholder="Select Chart")
+						option(value="chartNone",style="font-weight:bold")="Select A Chart..."
+						option(value="chartAll")="Your Shares"
+						option(value="chartMonth")="Your Shares this month"
+					div(style="top: -35px; position: relative; float: right; margin-right: 10px;")
+						div(class="arrow-up")
+						div(class="arrow-down")
+			div(id="chartNotes")
+				p!="The data generated by all shares accross the different labs in your department allow us to build these cool and informative charts that you might just be interested in. <span class='labColor'>Select a chart</span> above and start exploring! Stay tuned... More charts to come."
+
+			script.
+				window.onload = function() {
+				$('#monthAll').hide();
+				$('#sharesAll').hide();
+
+				var eSelect = document.getElementById('chartSelect');
+				console.debug("selected: " + $('#chartSelect').val());
+
+				if(chartSelect.selectedIndex === 1 || $('#chartSelect').val() == 'chartAll') {
+				console.log("sharesAll inside");
+				$('#chartNotes').hide();
+				$('#sharesAll').show();
+				document.querySelector('.ct-chart').__chartist__.update();
+				$('#monthAll').hide();
+				} else if(chartSelect.selectedIndex === 2 || $('#reportSelect').val() == 'chartMonth') {
+				console.log("chartOrders inside");
+				$('#chartNotes').hide();
+				$('#sharesAll').hide();
+				$('#monthAll').show();
+				document.querySelector('.ct-chart0').__chartist__.update();
+				} else if(eSelect.selectedIndex === 0 || $('#reportSelect').val() == 'chartNone') {
+				console.log("result None inside");
+				$('#monthAll').hide();
+				$('#sharesAll').hide();
+				$('#chartNotes').show();
+				}
+
+				chartSelect.onchange = function() {
+				if(chartSelect.selectedIndex === 1 || $('#chartSelect').val() == 'chartAll') {
+				console.log("sharesAll inside");
+				$('#chartNotes').hide();
+				$('#sharesAll').show();
+				document.querySelector('.ct-chart').__chartist__.update();
+				$('#monthAll').hide();
+				} else if(chartSelect.selectedIndex === 2 || $('#reportSelect').val() == 'chartMonth') {
+				console.log("chartOrders inside");
+				$('#chartNotes').hide();
+				$('#sharesAll').hide();
+				$('#monthAll').show();
+				document.querySelector('.ct-chart0').__chartist__.update();
+				} else if(eSelect.selectedIndex === 0 || $('#reportSelect').val() == 'chartNone') {
+				console.log("result None inside");
+				$('#monthAll').hide();
+				$('#sharesAll').hide();
+				$('#chartNotes').show();
+				}           
+				};
+
+				};
+
+
+			div(style="/*background-color: #3d9dcb; height: 2px;*/ margin-bottom: 30px; margin-top: 0px;")
+			div(id="sharesAll")
+				h4="A Line chart of all your shares."
+				- if(report_sharesbycategory != null && report_sharesbycategory.length >0)
+					p="This line graph depicts your total number of shares per Reagent Category:"
+					div(class="ct-chart ct-perfect-fourth")
+					div(id="tooltips", class="labColor") &nbsp;
+				- if(report_sharesbycategory != null && report_sharesbycategory.length==0)
+					h5="No chemicals have been requested."
+					p(style="padding-top: 20px;")=" "
+			div(id="monthAll")
+				h4="A Bar chart of your monthly shares."
+				- var now = new Date()
+				- var month = "month";
+				- var filteroutput = test.filter(function(x){console.log("x.monthorder: "+x.monthorder); console.log("x.yearorder: "+x.yearorder); console.log("now.getFullYear(): "+ now.getFullYear()); console.log("now.getMonth(): "+ now.getMonth()); console.log("so: "+ (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth())); return (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth() + 1)});
+				- if(filteroutput != null && filteroutput.length > 0) 
+					p!="This bar graph depicts your number of shares this " + month + " (so far) per Reagent Category:"
+					div(class="ct-chart0 ct-perfect-fourth")
+					div(id="tooltips0", class="labColor") &nbsp;
+				- if(filteroutput != null && filteroutput.length == 0) 
+					h5
+						span="You have not shared any reagent this month. If you have new chems to share, have your "
+						span(class="labColor")= "administrator" 
+						span=" upload them on your behalf and start saving money for your lab."
+			div(style="padding-top:25px;", class="") &nbsp;
+			- var array_rows = " |"
+			- var array_values = "0|"
+			- var array_rows2 = []
+			- var array_values2 = ""
+			- var filteroutput2 = report_sharesbycategory.filter(function(x){console.log("filter2: " + x.insuff); return (x.insuff == 1)});
+			- if(report_sharesbycategory != null && report_sharesbycategory.length > 0) 
+				-var ob = filteroutput2
+				-for(var prop in ob)
+					- array_rows = array_rows + ob[prop].category + "|"
+					- array_values = array_values + ob[prop].count + "|"
+				-var ob2 = filteroutput
+				-for(var prop in ob2)
+					- array_rows2 = array_rows2 + ob2[prop].category + "|"
+					- array_values2 = array_values2 + ob2[prop].counting + "|"
+
+				script.
+					console.log("filter: " + "#{filteroutput}");
+					var values = "#{array_values}";
+					values = values.split("|");
+					var valTransform = [];
+					for(var prop in values){
+						valTransform.push(values[prop]);
+					}
+					var rows = "#{array_rows}";
+					rows = rows.split("|");
+					var rowTransform = [];
+					for(var prop in rows){
+						rowTransform.push(rows[prop]);
+					}
+					console.log("more rowTransform trans: " + rowTransform)
+					var data = {
+						labels: rowTransform,
+						series: [
+							valTransform
+						]
+					};
+
+					var values2 = "#{array_values2}";
+					values2 = values2.split("|");
+					var valTransform2 = [];
+					for(var prop in values2){
+						valTransform2.push(values2[prop]);
+					}
+					var rows2 = "#{array_rows2}";
+					rows2 = rows2.split("|");
+					var rowTransform2 = [];
+					for(var prop in rows2){
+						rowTransform2.push(rows2[prop]);
+					}
+					console.log("more valTransform2 trans: " + valTransform2)
+					console.log("more rowTransform2 trans: " + rowTransform2)
+					var data2 = {
+						labels: rowTransform2,
+						series: [
+							valTransform2
+						]
+					};
+					/*
+					var options = {
+						width: 300,
+						height: 200
+					};*/
+
+					var responsiveOptions = [
+						['(max-width: 440px)', {
+							width: 300,
+							height: 200
+						}],
+						['(max-width: 767px)', {
+							width: 500,
+							height: 200
+						}],
+						['(min-width: 990px)', {
+							width: 300,
+							height: 200
+						}]
+					];
+
+					var chart0 = new Chartist.Bar('.ct-chart0', data2, responsiveOptions);
+
+					var chart = new Chartist.Line('.ct-chart', data, responsiveOptions);
+
+					// Let's put a sequence number aside so we can use it in the event callbacks
+					var seq = 0,
+					delays = 50,
+					durations = 300;
+
+					// Once the chart is fully created we reset the sequence
+					chart.on('created', function() {
+						seq = 0;
+					});
+
+					// On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+					chart.on('draw', function(data) {
+						seq++;
+
+						if(data.type === 'line') {
+							// If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+							data.element.animate({
+								opacity: {
+									// The delay when we like to start the animation
+									begin: seq * delays + 1000,
+									// Duration of the animation
+									dur: durations,
+									// The value where the animation should start
+									from: 0,
+									// The value where it should end
+									to: 1
+								}
+							});
+						} else if(data.type === 'label' && data.axis === 'x') {
+							data.element.animate({
+								y: {
+									begin: seq * delays,
+									dur: durations,
+									from: data.y + 100,
+									to: data.y,
+									// We can specify an easing function from Chartist.Svg.Easing
+									easing: 'easeOutQuart'
+								}
+							});
+						} else if(data.type === 'label' && data.axis === 'y') {
+							data.element.animate({
+								x: {
+									begin: seq * delays,
+									dur: durations,
+									from: data.x - 100,
+									to: data.x,
+									easing: 'easeOutQuart'
+								}
+							});
+						} else if(data.type === 'point') {
+							data.element.animate({
+								x1: {
+									begin: seq * delays,
+									dur: durations,
+									from: data.x - 10,
+									to: data.x,
+									easing: 'easeOutQuart'
+								},
+								x2: {
+									begin: seq * delays,
+									dur: durations,
+									from: data.x - 10,
+									to: data.x,
+									easing: 'easeOutQuart'
+								},
+								opacity: {
+									begin: seq * delays,
+									dur: durations,
+									from: 0,
+									to: 1,
+									easing: 'easeOutQuart'
+								}
+							});
+						} else if(data.type === 'grid') {
+						// Using data.axis we get x or y which we can use to construct our animation definition objects
+							var pos1Animation = {
+								begin: seq * delays,
+								dur: durations,
+								from: data[data.axis.units.pos + '1'] - 30,
+								to: data[data.axis.units.pos + '1'],
+								easing: 'easeOutQuart'
+							};
+
+							var pos2Animation = {
+								begin: seq * delays,
+								dur: durations,
+								from: data[data.axis.units.pos + '2'] - 100,
+								to: data[data.axis.units.pos + '2'],
+								easing: 'easeOutQuart'
+							};
+
+							var animations = {};
+							animations[data.axis.units.pos + '1'] = pos1Animation;
+							animations[data.axis.units.pos + '2'] = pos2Animation;
+							animations['opacity'] = {
+								begin: seq * delays,
+								dur: durations,
+								from: 0,
+								to: 1,
+								easing: 'easeOutQuart'
+							};
+
+							data.element.animate(animations);
+						}
+					});
+
+					// For the sake of the example we update the chart every time it's created with a delay of 10 seconds
+					/*chart.on('created', function() {
+						if(window.__exampleAnimateTimeout) {
+							clearTimeout(window.__exampleAnimateTimeout);
+							window.__exampleAnimateTimeout = null;
+						}
+						window.__exampleAnimateTimeout = setTimeout(chart.update.bind(chart), 12000);
+					});*/
+					
+					var addedEvents = false;
+					chart.on('draw', function() {
+						if (!addedEvents) {
+							$('.ct-point').on('mouseover', function() {
+								$('#tooltips').html('<b>Selected Quantity: </b>' + $(this).attr('ct:value'));
+							});
+
+							$('.ct-point').on('mouseout', function() {
+								$('#tooltips').html("&nbsp;")
+							});
+						}
+					});
+					var addedEvents0 = false;
+					chart0.on('draw', function() {
+						if (!addedEvents0) {
+							$('.ct-bar').on('mouseover', function() {
+								$('#tooltips0').html('<b>Selected Quantity: </b>' + $(this).attr('ct:value'));
+							});
+
+							$('.ct-bar').on('mouseout', function() {
+								$('#tooltips0').html("&nbsp;")
+							});
+						}
+					});
+
+						

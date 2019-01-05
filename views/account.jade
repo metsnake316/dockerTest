@@ -1,0 +1,192 @@
+extends layout
+
+block content
+    div(class="zoomnow container login marginbottom margintop container2 moveFromLeft botbottom")
+        div(class="share-container account-container")
+            h1(class="wrapped2")
+              span(class="fa fa-user lightyokecolor")
+              span!= " " + i18n.__("account.title") + labyoker + " "
+              span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+            p(class="texthalf padding-bottom-20")!= i18n.__("account.subtitle")
+            - if(resultsAccount)
+              div(id="ordered" class="animated fadeInDown")
+                div(class="alert margin-bottom-45")
+                  a(href="#", class="closeordered", data-dismiss="alert", aria-label="close",data-toggle="tooltip", title="close")="x"
+                  h4(class="orderedh4")= i18n.__("account.success")
+                     span!=" " + resultsAccount
+                     span="!"                 
+            div
+              div(class="table-responsive center profile")
+                              -var ob = userDetails
+                              -var prop = 0
+                              - var j = 1
+                              - var selectedlang = ""
+                              //-for(var prop in ob)
+                              - var i = prop % 2
+                              - var classname = "";
+                              - if(i==0)
+                                  - classname = "active"
+                              - if(prop==1)
+                                  - classname = "you info-best"
+                              - var name = ob[prop].name
+                              - var surname = ob[prop].surname
+                              - var email = ob[prop].email
+                              - var tel = ob[prop].tel
+                              - var admin = ob[prop].admin
+                              - var oninsuff = ob[prop].oninsuff
+                              - var onfill = ob[prop].onfill
+                              - var checkOnInsuff = false
+                              - if(oninsuff !=null && oninsuff > 0)
+                                - checkOnInsuff = true
+                              - oninsuff = oninsuff + ""
+                              - var checkOnFill = false
+                              - if(onfill !=null && onfill > 0)
+                                - checkOnFill = true
+                              - onfill = onfill + ""
+                              - var adminIntro = ""
+                              - var lab = ob[prop].lab
+                              - selectedlang = ob[prop].lang
+                              - var ob = labs
+                              - var labadmin = "unknown"
+                              - for(var prop in ob)
+                                 - if(lab == ob[prop].labname)
+                                    - labadmin = ob[prop].admin
+                                    - adminIntro = i18n.__("account.admin1")+ "<a href=\"mailto:'"+labadmin+"'\">" + labadmin + "</a>. " + i18n.__("account.admin2")
+                                 - if(admin > 0)
+                                   - if(email == ob[prop].admin)
+                                      - var labadmin = ob[prop].labname
+                                      - adminIntro = i18n.__("account.admin3")+ "<span class='labColor'>" + labadmin + "</span>. " + i18n.__("account.admin4")
+                              - if(!name)
+                                  - name = "..."
+                              - if(!email)
+                                  - email = "..."
+                              - if(!surname)
+                                  - surname = "..."
+                              - if(!tel)
+                                  - tel = "..."
+                              - if(!lab)
+                                  - lab = "..."
+                              div(class="accountdetailWidth float-left")
+                                div(class="accountdetail accountdetail-header labColor animated fadeInUp")=i18n.__("account.form.firstname")
+                                div(class=" accountdetail accountdetail-header labColor animated fadeInUp")=i18n.__("account.form.lastname")
+                                div(class=" accountdetail accountdetail-header labColor animated fadeInUp account-background")=i18n.__("account.form.email")
+                              div(class="wrapped accountdetailMargin")
+                                div(class="margin-bottom-30 accountdetail accountdetailRowMargin animated fadeInDown")
+                                  - var nametrunc = name
+                                  - if(nametrunc.length > 19)
+                                    - nametrunc = nametrunc.substr(0, 18) + '...'
+                                  span(id="name")!=nametrunc + " "
+                                  form(action="/changeDetails" id="changename" method="post" class="nameform topdown-5")
+                                    input(name="valuedetail" type="text" id="valuedetail" placeholder=nametrunc)
+                                    input(name="column" type="hidden" id="column" value="name")
+                                    input(name="formemail" type="hidden" id="formemail" value=email)
+                                  span(onclick="pencilname()", id="pencilname", class="fa fa-pencil labColor")
+                                  span(onclick="updatenameform()", id="checkname", class="fa fa-check labColor")
+                                div(class=" margin-bottom-30 accountdetail accountdetailRowMargin animated fadeInDown")
+                                  - var surnametrunc = surname
+                                  - if(surnametrunc.length > 19)
+                                    - surnametrunc = surnametrunc.substr(0, 18) + '...'
+                                  span(id="surname")!= surnametrunc + " "
+                                  form(action="/changeDetails" id="changesurname" method="post" class="surnameform topdown-5")
+                                    input(name="valuedetail" type="text" id="valuedetail" placeholder=surnametrunc)
+                                    input(name="column" type="hidden" id="column" value="surname")
+                                    input(name="formemail" type="hidden" id="formemail" value=email)
+                                  span(onclick="pencilsurname()", id="pencilsurname", class="fa fa-pencil labColor")
+                                  span(onclick="updatesurnameform()", id="checksurname", class="fa fa-check labColor")
+                                - var emailtrunc = email
+                                - if(email.length > 19)
+                                  - emailtrunc = emailtrunc.substr(0, 18) + '...'
+                                div(class="margin-bottom-30 accountdetail accountdetailRowMargin animated fadeInDown")!= emailtrunc
+                              div(class="float-left accountdetailWidth")
+                                div(class=" accountdetail accountdetail-header labColor animated fadeInUp")=i18n.__("account.form.tel")
+                                div(class="account-background accountdetail accountdetail-header labColor animated fadeInUp")=i18n.__("account.form.lab")
+                                div(class=" accountdetail accountdetail-header labColor animated fadeInUp")=i18n.__("account.form.lang")
+                              div(class="wrapped accountdetailMargin")
+                                div(class="margin-bottom-30 accountdetail accountdetailRowMargin animated fadeInDown")
+                                  span(id="tel")!= tel + " "
+                                  form(action="/changeDetails" id="changetel" method="post" class="telform topdown-5")
+                                    input(name="valuedetail" type="tel" id="valuedetail" placeholder=tel)
+                                    input(name="column" type="hidden" id="column" value="tel")
+                                    input(name="formemail" type="hidden" id="formemail" value=email)
+                                  span(onclick="penciltel()", id="penciltel" class="fa fa-pencil labColor")
+                                  span(onclick="updatetelform()", id="checktel" class="fa fa-check labColor")
+                                - var labtrunc = lab
+                                  - if(labtrunc.length > 19)
+                                    - labtrunc = labtrunc.substr(0, 18) + '...'
+                                div(class="margin-bottom-30 accountdetail accountdetailRowMargin animated fadeInDown")!= labtrunc
+                                div(class="margin-bottom-30 width-75 accountdetail accountdetailRowMargin animated fadeInDown")
+                                  span(id="lang")
+                                  form(action="/changeDetails" id="changelang" method="post" class="langform topdown-25")
+                                    span(class="fa fa-sort accountlang")
+                                    select(name="selectlang" type="text" id="selectlang" class="form-control" placeholder="")
+                                      - for(var loc in localeslist)
+                                          - var loca = localeslist[loc]
+                                          option(value=loca,class="font-bold",selected=(selectedlang===loca ? "selected" : undefined))=loca
+                                    input(name="column" type="hidden" id="column" value="lang")
+                                    input(name="valuedetail" type="hidden" id="valuedetail" value="")
+                                    input(name="formemail" type="hidden" id="formemail" value=email)
+              div(class="accountthreepoint mobileonly4 threepointssep")
+              div(class="results notify animated fadeIn accountres")
+                h3(class="account-h3")
+                  span(class="account-envelope fa fa-envelope")
+                  span!= i18n.__("account.notify.title")
+                div(class="account-container-one")
+                  div(class="reportlabelwidth accountlabelwidth account-email")
+                    label(for="emailOnInsuff" class="font-bold")!= i18n.__("account.notify.oninsuff")
+                    div(class="fullwidth checkboxThree")
+                      form(action="/changeDetails" id="changeoninsuff" method="post" class="oninsuffform")
+                        input(type="checkbox" name="emailOnInsuff" id="emailOnInsuff" value="oninsuff" checked=(checkOnInsuff===true ? "checked" : undefined))
+                        input(name="valuedetail" type="hidden" id="valuedetail" value=oninsuff)
+                        input(name="column" type="hidden" id="column" value="oninsuff")
+                        input(name="formemail" type="hidden" id="formemail" value=email)
+                      label(for="emailOnInsuff" class="labelcheck shadow labelcheckoninsuff")
+                  div(class="reportlabelwidth accountlabelwidth account-email")
+                    label(for="emailOnFill" class="font-bold")!= i18n.__("account.notify.onfill")
+                    div(class="fullwidth checkboxThree")
+                      form(action="/changeDetails" id="changeonfill" method="post" class="onfillform")
+                        input(type="checkbox" name="emailOnFill" id="emailOnFill" value="onfill" checked=(checkOnFill===true ? "checked" : undefined))
+                        input(name="valuedetail" type="hidden" id="valuedetail" value=onfill)
+                        input(name="column" type="hidden" id="column" value="onfill")
+                        input(name="formemail" type="hidden" id="formemail" value=email)
+                      label(for="emailOnFill" class="labelcheck shadow labelcheckonfill")
+        div(class="threepointssep account-3-sep")
+        div(class="texthalf")
+          span!=" <span id='showteam' class='labColor font-bold'><div class='buttons'><button type='submit' class='btn btn-success btn-lg btn-block shadow teamaccountbuttonwidth width-278' id='teamTitle'>" + i18n.__("account.button") + "</button></div></span>"
+        div(id="team")
+          h3!=i18n.__("account.team.desc1") + labname + i18n.__("account.team.desc2")
+          p(class="texthalf")!=i18n.__("account.team.subdesc1")+ dept + "</span>. " + adminIntro + i18n.__("account.team.subdesc2")
+          div(class="account-text animated fadeIn")
+            - var t = team.length
+            - var w = 180;
+            - var right = 10;
+            - if(t<4)
+              - w = 90/team.length
+              - right = 0;     
+            - var ob2 = team
+            - for(var prop in ob2)
+                - var i = prop % 2
+                - var color = "account-color-one"
+                - if(i==0)
+                    - color = "account-color-two"
+                div(class="myteammember")
+                  span(class="fa fa-user-circle-o myteamcard " + color)
+                  span(class="account-align")
+                    a(href="mailto:" + ob2[prop].email , class="cursor-pointer")
+                      span(class="fa fa-location-arrow account-location" id="email")
+                    span #{" " + ob2[prop].name + " " + ob2[prop].surname }
+        div(class="slide-out-tip-div desktabonly account-slide-container")
+            a(class="handle" href="", title='#{i18n.__("search.tip.title")}')!=Content
+            div(class="slide-div")
+                div(class="text-align-center")
+                    span(class="zoom_controls")
+                        a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+                          span(class="fa fa-minus-circle")
+                        a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+                          span(class="fa fa-circle-o-notch")
+                        a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+                          span(class="fa fa-plus-circle")
+                    div(class="threepointssep marginbottom-down-10")
+                p(class="font-12")!= i18n.__("account.tip.header")
+                div(class="account-desc")
+                  span!= i18n.__("account.tip.desc")
+        span(class="desktabonly", id="checkdisplay")

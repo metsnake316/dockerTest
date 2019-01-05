@@ -1,0 +1,180 @@
+extends layout
+
+block content
+    div(class="zoomnow container login marginbottom margintop container2 moveFromLeft botbottom")
+      - var classContainer = ""
+      - var widthnodata = ""
+      - if(orderresults == "")
+        - widthnodata = " width-100%"
+      if email == undefined
+         - classContainer = ""
+      div(class="order-container float-left" + widthnodata id="order-container")
+            h1
+              span(class="fa fa-ship lightyokecolor")
+              span!= i18n.__("orders.title")
+              span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+            if(orderresults == "")
+              h4!= i18n.__("orders.non.title")
+              p!= i18n.__("orders.non.subtitle")
+              div(class="searchlogo margintop-50")
+                span(class="fa fa-circle-thin roue1")
+                img(src="/images/cart.png", alt="The Cart Order", class="width-200")
+                span(class="fa fa-circle-thin roue2")
+              div(class="threepointssep")
+            if(orderresults != "" && email == undefined)
+              p!=i18n.__("orders.subdesc")
+              div(id="results2", class="resultsshadow")
+                div(id="ctl00_Div2" class="row rank")
+                  div(class="table-responsive")               
+                    table(id="rankTblOrders" class="rankTbl table  animated fadeIn")
+                      thead
+                        tr(class="you info-best font-bold")
+                          th(class="desktabonly")= i18n.__("orders.table.id")
+                          th(class="wrapped")!= i18n.__("orders.table.reagent")
+                          th= i18n.__("orders.table.vendor")
+                          th(class="desktabonly")= i18n.__("orders.table.catalog")
+                          th= i18n.__("orders.table.email")
+                          th= i18n.__("orders.table.date")
+                      tbody
+                        - var i = 0
+                        -var ob = orderresults
+                        -for(var prop in ob)
+                          - var d = ob[prop].date
+                          - var insuff = ob[prop].insufficient
+                          - d = d.toLocaleDateString("en-US")
+                          - var n = ob[prop].status
+                          - var isnew = ""
+                          - if(n != "fulfilled")
+                             - isnew = "isnew"
+                          - if(insuff == 0)
+                             - isnew = "backColorinsuff"
+                          - i = i + 1
+                          tr(class=isnew)
+                            td(class="desktabonly")= i
+                            td(class="wrapped2") #{ob[prop].agent}
+                            td(class="wrapped2") #{ob[prop].vendor}
+                            td(class="wrapped2 desktabonly") #{ob[prop].catalognumber}
+                            td(class="wrapped2") #{ob[prop].email}
+                            td #{d}
+
+      div(class="slide-out-tip-div account-slide-container")
+        a(class="handle" href="last-transactions", title='#{i18n.__("search.tip.header")}')!=Content
+        div(class="slide-container-one")
+            div(class="textalign-center")
+                span(class="zoom_controls")
+                    a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+                      span(class="fa fa-minus-circle")
+                    a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+                      span(class="fa fa-circle-o-notch")
+                    a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+                      span(class="fa fa-plus-circle")
+                div(class="threepointssep margintopbelow-10")
+            p(class="font-12")!= i18n.__("orders.tip.header")
+            div(class="slide-desc")
+              span!= i18n.__("orders.tip.desc")
+
+      if(orderresults != "" && email == undefined)
+        div(class="share-container adjustpadding adjustpaddingrightandwidth orders-results")
+          script(type="text/javascript" src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js")
+          if(orderresults != "" && email == undefined)
+            div(class="threepointssep mobileonly5")
+            div(class="alert alert-orders fade in alert-dismissable order-container order-container-one")
+              a(href="#", class="close", data-dismiss="alert", aria-label="close", title="close")="x"
+              span!= booster          
+              div(class="threepointssep desktoponly4")
+          div(class="threepointssep mobileonly4")
+          h3(class="paddingtop-43")
+            span(class="fa fa-bar-chart orders-chart-one")
+            span= i18n.__("orders.chart.title")
+          form(action="chartSelect", method="post")
+            div(class="buttons")
+              select(name="chartSelect" type="text" id="chartSelect" class="form-control orders-chart-two" placeholder=i18n.__("orders.chart.select"))
+                option(value="chartNone",class="font-bold")= i18n.__("orders.chart.option1")
+                option(value="chartQty")= i18n.__("orders.chart.option2")
+                option(value="chartOrders")= i18n.__("orders.chart.option3")
+                option(value="chartLabs")= i18n.__("orders.chart.option4")
+              span(class="fa fa-sort orders-sort")
+          div(id="chartNotes", class="displaynone")
+            p!= i18n.__("orders.chart.notes")
+          - var find0 = report_sharesbycategory
+          - var find1 = test
+          - var find2 = laborders
+          - var now = new Date()
+          - var count = 0;
+          - var filteroutput = test.filter(function(x){console.log("x.monthorder: "+x.monthorder); console.log("x.yearorder: "+x.yearorder); console.log("now.getFullYear(): "+ now.getFullYear()); console.log("now.getMonth(): "+ now.getMonth()); console.log("so: "+ (x.yearorder == now.getFullYear() && x.monthorder == (now.getMonth() + 1))); if(x.yearorder == now.getFullYear() && x.monthorder == (now.getMonth() + 1)){count++;} console.log("count is: "+count); if(count<6){return (x.yearorder == now.getFullYear() && x.monthorder == (now.getMonth() + 1))}});
+          script.
+            var find0 = "#{find0}", find1 = "#{find1}", find2 = "#{find2}", now = "#{now}", filteroutput = "#{filteroutput}"
+          script(type="text/javascript" src="/js/orders-chartnotes-utils.js")
+
+
+          div(id="qtyComp", class="displaynone")
+            h4!= i18n.__("orders.qty.title1") + currentlabname + i18n.__("orders.qty.title2")
+            - if(report_sharesbycategory != null && report_sharesbycategory.length >0)
+              p!= i18n.__("orders.qty.subtitle")
+              
+              div(class="ct-chart1 ct-perfect-fourth")
+              div(id="tooltips", class="labColor") &nbsp;
+            - if(report_sharesbycategory != null && report_sharesbycategory.length==0)
+              h5!= i18n.__("orders.qty.subtitle1")
+          div(id="monthComp", class="displaynone")
+            - // var now = new Date()
+            - // var filteroutput = test.filter(function(x){console.log("x.monthorder: "+x.monthorder); console.log("x.yearorder: "+x.yearorder); console.log("now.getFullYear(): "+ now.getFullYear()); console.log("now.getMonth(): "+ now.getMonth()); console.log("so: "+ (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth())); return (x.yearorder == now.getFullYear() && x.monthorder == now.getMonth() + 1)});
+            h4= i18n.__("orders.month.title")
+            - if(filteroutput != null && filteroutput.length > 0) 
+               p!= i18n.__("orders.month.subtitle1")
+               div(class="ct-chart0 ct-perfect-fourth")
+               div(id="tooltips0", class="labColor") &nbsp;
+            - if(filteroutput != null && filteroutput.length == 0) 
+               h5
+                 span= i18n.__("orders.month.subtitle2")
+          div(id="labsComp", class="displaynone")
+            //- if(filteroutput != null && filteroutput.length == 0) 
+            h4= i18n.__("orders.month.subtitle3")
+            p!= i18n.__("orders.month.subtitle4")
+            - if(laborders != null && laborders.length > 0)
+               div(class="ct-chart3 ct-perfect-fourth")
+               div(id="tooltips3", class="labColor") &nbsp;
+            - if(laborders != null && laborders.length == 0) 
+             h5= i18n.__("orders.month.subtitle5")
+
+          - var array_rows = []
+          - var array_values = ""
+          - var array_rows2 = []
+          - var array_values2 = ""
+          - var array_rows3 = []
+          - var array_values3 = ""
+          - var categorieslist = ""
+          
+          -var cat = categories
+          -for(var prop in cat)
+            - categorieslist = categorieslist + cat[prop].agent + "|"
+          -var ob = report_sharesbycategory
+          -for(var prop in ob)
+            - array_rows = array_rows + ob[prop].agent + "|"
+            - array_values = array_values + ob[prop].counting + "|"
+
+          -var ob3 = report_ordersbycategory
+          -for(var prop in ob3)
+            - array_rows3 = array_rows3 + ob3[prop].agent + "|"
+            - array_values3 = array_values3 + ob3[prop].counting + "|"
+
+          -var ob2 = filteroutput
+          -for(var prop in ob2)
+            - array_rows2 = array_rows2 + ob2[prop].agent + "|"
+            - array_values2 = array_values2 + ob2[prop].counting + "|"
+          
+          - var arraylabRowsStr = "";
+          - var arraylabValuesStr = "";
+          - if(laborders != null && laborders.length > 0)
+            - for(var prop in laborders)
+              - var array_rows5 = []
+              - var array_values5 = ""
+              - if(laborders[prop].lab != null)
+                 - arraylabRowsStr = arraylabRowsStr + laborders[prop].lab + "|"
+                 - arraylabValuesStr = arraylabValuesStr + laborders[prop].counting + "|"
+
+          script.
+            var var_dot_reagent = "#{i18n.__("dot.reagent")}", var_dot_select = "#{i18n.__("dot.selected")}", var_arraylabRowsStr = "#{arraylabRowsStr}", var_arraylabValuesStr = "#{arraylabValuesStr}", var_categorieslist = "#{categorieslist}", var_array_rows = "#{array_rows}", var_array_rows2 = "#{array_rows2}", var_array_rows3 = "#{array_rows3}", var_array_values = "#{array_values}", var_array_values2 = "#{array_values2}", var_array_values3 = "#{array_values3}";
+          script(type="text/javascript" src="/js/orders-chartnotes2-utils.js")
+
+      span(class="desktabonly", id="checkdisplay")

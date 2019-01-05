@@ -1,0 +1,66 @@
+extends layout
+
+block content
+    div(class="container login front containertop login-container")
+         - if(latestshares != null && latestshares != undefined)
+            -var ob = latestshares
+            - var i = 0
+            - var x = ""
+            - for(var prop in ob.slice(0, 3))
+                - var n = ob[prop].agent
+                - x = x + n + " "
+                            
+            div(class="badge desktabonly")
+                div.h1!= x
+
+         div(class="login-center-relative")
+             a(href="/search", class="sunlogos")
+                img(src="/images/yoke4.png", alt="The Yoke", class="yokelogo")
+             p(class="marginbottom-0-right-5")
+             h1(id="hour", class="font-30")
+             p(class="centralize") #{i18n.__("login.welcome")}
+
+             div(id="ctl00_Div2" class="frontdiv results")
+               div
+                if message
+                    div(class="alert alert-danger-report fade in alert-dismissable alertshadow")!= message
+                form(action="/login" method="post")
+                    div(class="textentry login-text-user")
+                        span(class="fa fa-user login-user")
+                        input(name="user" type="text" id="user" class="form-control form-control0 placeholderColor" placeholder= i18n.__("login.username"))
+                    div(class="textentry login-text-pass")
+                        input(name="pass" type="password" id="pass" class="form-control form-control0 placeholderColor" placeholder= i18n.__("login.password"))
+                        span(class="fa fa-key login-pass")
+                    div(class="buttons")
+                        button.btn.btn-success.btn-lg.btn-block.shadow.resizebutton(type='submit') #{i18n.__("login.button")}
+                div(class="login-buttons")
+                    span(class="floatleft paddingbottom-20 marginbottom-40")
+                        a(href="/register", class="zindex-10") #{i18n.__("login.registerLink")}
+                    span(class="float-right paddingbottom-20")
+                        a(href="/forgot", class="zindex-10") #{i18n.__("login.forgotLink")}
+        div(class="help")
+           //span
+           //  a(href="/login?lang=se")
+           //     img(src="images/se.png", alt="Svenska", class="selogin")
+           span
+             a(href="/login?lang=en")
+                img(src="images/en.png", alt="English", class="enlogin")
+           a(href="/help" title="Help")
+            img(src="images/bouee5.png", alt="Help", class="bouee")
+           span
+             a(href="/login?lang=fr")
+                img(src="images/fr.png", alt="Français", class="frlogin")                
+     - if(latestshares != null && latestshares != undefined)
+        div(class="slide-out-div desktabonly lineheight displaynone")
+            a(class="handle rightbelow-60" href="last-transactions")!=Content
+            div(class="login-text")
+                p(class="font-bold")!= i18n.__("login.texting1")
+                p
+                    -var ob = latestshares
+                    - var i = 0
+                    -for(var prop in ob.slice(0, 3))
+                        - var n = ob[prop].agent
+                            span(class="test login-color-slide")!= n + " "
+                            - if(prop < 2)
+                                span(class="test2 color-white")!="-|- "
+    span(class="desktabonly", id="checkdisplay")

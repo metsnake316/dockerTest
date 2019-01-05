@@ -1,0 +1,42 @@
+extends layout
+
+block content
+  div(class="container login front container2 containertop change-container")
+     a(href="/search")
+        img(src="/images/yoke4.png", alt="The Yoke", class="yokelogo")
+       div
+        if !userfound && !usernotfound
+            h1= i18n.__("forgot.title")
+            p(class="centralize")!= i18n.__("forgot.subtitle")
+            div(id="ctl00_Div2" class="frontdiv results")
+                if message
+                    div(class="alert alert-danger-report")!= message
+                form(action="/forgot" method="post")
+                    div(class="marginbottom-20")
+                        div(class="textentry")
+                            span(class="fa fa-user forgot-user")
+                            input(name="forgotuser" type="text" id="forgotuser" class="form-control form-control0" placeholder=i18n.__("forgot.username"))
+                        div(class="buttons")
+                        button.btn.btn-success.btn-lg.btn-block.shadow.resizebutton(type='submit')= i18n.__("forgot.button")
+
+        if userfound
+            div(id="ctl00_Div2" class="frontdivs")
+                    h1(class="centerText")
+                        span= i18n.__("forgot.desc1")
+                        span(class="labColor")=" " + userfound
+                        span="."
+                    p!= i18n.__("forgot.desc2")
+                    
+            
+        if usernotfound
+            div(id="ctl00_Div2" class="frontdiv")
+                    h1(class="centerText")
+                        span= i18n.__("forgot.fail.desc")
+                    p!=message
+                    if !noforgotform
+                        form(action="/forgot" method="post")
+                            div(class="marginbottom-20")
+                                div(class="textentry")
+                                    input(name="forgotuser" type="text" id="forgotuser" class="form-control form-control0 forgot-border-color" placeholder=i18n.__("forgot.username"))
+                                div(class="buttons")
+                                button.btn.btn-success.btn-lg.btn-block.shadow.resizebutton(type='submit')= i18n.__("forgot.button")

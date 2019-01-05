@@ -1,0 +1,21 @@
+doctype html
+
+html(lang='en')
+    head
+      title i18n Demo
+      meta(charset="utf-8")
+    body
+
+      p #{i18n.__("Welcome")}
+
+      p
+        a(href="/contact") Contact Information
+
+        p #{i18n.__("Language")}
+
+      p
+        ul
+          li
+            a(href="/test?lang=fr") Francais
+          li
+            a(href="/test?lang=en") English

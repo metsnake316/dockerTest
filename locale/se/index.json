@@ -1,0 +1,39 @@
+{
+"bot.confused": "Sade du: **%s**. Försöket som frågar för **hjälp** eller ***reagens*** för beställning eller **avbryt *reagens* från *email***",
+"bot.cancel": "Absolut, avbryter jag din beställning nu. ",
+
+
+"bot.order": "Absolut! Låt oss sätta den tillsammans…",
+"bot.Order.title": "Beställning",
+"bot.Order.subtitle": "Bekräftar Please denna beställning: ",
+"bot.order.reagent": "Reagens",
+"bot.order.email": "Email",
+"bot.order.vendor": "Försäljare",
+"bot.order.catalognumber": "Katalognummer",
+"bot.order.button": "Ja",
+"bot.order.invalidsearch": "Skrev in du ett ogiltigt agensnyckelord. Behaga försöket igen och skriv in: ***reagens*** för beställning. ",
+"bot.order.noresults": "Finns det några tillgängliga agens för ditt beställningsförsök av **%s**. ",
+
+
+"bot.ciao": "Farväl. ",
+"bot.hi": "Oj Hello till dig! ",
+"bot.thanks": "Är du mest välkommen. Jag är alltid här när du behöver mig. ",
+"bot.help": "Verkar du för att fråga för hjälp på något. Försök vårt [hjälp](https://team-labyoke.herokuapp.com/help) avsnittet för en rikedom av informations- och videotutorials eller är. Något annat kan jag hjälpa dig med? ",
+
+
+"bot.ordersuccessful": "Har din beställning lyckat förlagts. En bekräftelseemail har överförts till dig. ",
+"bot.ordernotsuccessful": "Fanns det en fråga, medan jag försökte att förlägga din beställning. Behaga försöket igen. ",
+
+
+"bot.Cancel.title": "Annulleringsbeställning",
+"bot.Cancel.subtitle": "Bekräftar Please denna annullering: ",
+"bot.cancel.invalidsearch": "Skrev in du ogiltiga annulleringsnyckelord. Behaga försöket igen och skriv in: **Avbryt *reagens* från *email***. ",
+"bot.cancel.noresults": "Ledset kunde jag inte finna någon agens för att avbryta för: **%s**. ",
+"bot.cancelsuccessful": "Har din beställning lyckat avbrutits. En bekräftelseemail har överförts till requestoren. ",
+"bot.cancelnotsuccessful": "Fanns det en fråga, medan jag försökte att avbryta beställningen. Behaga försöket igen. ",
+
+
+"bot.greet": "Hello där! Mitt namn är professor L! Vad kan jag hjälpa dig med? Försök som frågar för **hjälp** eller **beställa *reagens*** eller ***reagens* för *annulleringsbeställning* från *email***."
+
+
+}

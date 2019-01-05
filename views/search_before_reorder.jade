@@ -1,0 +1,177 @@
+extends layout
+
+block content
+    form(action="/orders" id="orders" method="post")
+        input(name="emailform" type="hidden" id="emailform" value="")
+        input(name="agentform" type="hidden" id="agentform" value="")
+        input(name="vendorform" type="hidden" id="vendorform" value="")
+        input(name="catalogform" type="hidden" id="catalogform" value="")
+        input(name="locationform" type="hidden" id="locationform" value="")
+        input(name="categoryform" type="hidden" id="categoryform" value="")
+        input(name="qtyform" type="hidden" id="qtyform" value="")
+        input(name="labform" type="hidden" id="labform" value="")
+        input(name="langform" type="hidden" id="langform" value="")
+        div(id="ios-light")
+            center
+                h1 #{i18n.__("search.layovertitle")}
+                p(id="orderText")
+                div
+                    div(id="actionorder" class="exit" style="width: 50%; float: left; background-color: rgba(138, 109, 59, 0.55);")="OK"
+                    div(class="exit" onclick="iosLightExit()") #{i18n.__("search.layovercancel")}
+        div(class="shade" id="shade")
+        div(class="shade-light" id="shade-light")
+
+    div(class="container login marginbottom")
+        div(style="float: left;max-width: 400px;margin-right: 20px;")
+            h1 #{i18n.__("search.title")}
+            p!= i18n.__("search.description")
+            - searchText = i18n.__("search.searchholder")
+            - searchTextCatalog = i18n.__("search.catalogholder")
+            - classButton = "btn-success"
+            - classButtonCatalog = "btn-success"
+            if searchformText
+                - searchText = i18n.__("search.results.text") + searchformText
+                - classButton = "btn-success-results"
+            if searchformTextCatalog
+                - searchTextCatalog = i18n.__("search.results.text") + searchformTextCatalog
+                - searchformTextCatalog = i18n.__("search.results.text")  + searchformTextCatalog
+                - classButtonCatalog = "btn-success-results"            
+            div(id="ctl00_Div2" class="row")
+                div
+                    if message
+                        div(class="alert alert-danger")!= message
+                    form(action="/search" method="post")
+                        div(class="textentry")
+                            input(name="searchText" list="agent-datalist" type="text" id="searchText" class="form-control" placeholder=searchText)
+                            datalist(id="agent-datalist")
+                                -var ob2 = agentsResults
+                                -for(var prop in ob2)
+                                    option(value='#{ob2[prop].agent}')
+                        div(class="buttons")
+                            button(class="btn " + classButton + " btn-lg btn-block" type='submit') #{i18n.__("search.buttonreagent")}
+                            img(src="images/yoke5.png", alt="The Search", title="Search", style="border-width:0px; width: 40px; margin-top: -76px; margin-left: 300px;")
+                    div(style="background-color: #3d9dcb; height: 2px; margin-bottom: 40px; margin-top: 30px;")
+                    if messageCatalog
+                        div(class="alert alert-danger")!= messageCatalog
+                    form(action="/searchCatalog" method="post")
+                        div(class="textentry")
+                            input(name="searchTextCatalog" list="catalog-datalist" type="text" id="searchTextCatalog" class="form-control" placeholder=searchTextCatalog)
+                            datalist(id="catalog-datalist")
+                                -var ob2 = agentsResults
+                                -for(var prop in ob2)
+                                    option(value='#{ob2[prop].catalognumber}')
+                        div(class="buttons")
+                            button(class="btn " + classButtonCatalog + " btn-lg btn-block" type='submit') #{i18n.__("search.buttoncatalog")}
+                            img(src="images/yoke6.png", alt="The Search", title="Search", style="border-width:0px; width: 40px; margin-top: -75px; margin-left: 300px;")
+        
+        if email != undefined
+          div.searchResults(id="ordered")
+            div(class="alert alert-success", style="margin-top: 25px;float:right;")
+                a(href="#", class="close", data-dismiss="alert", aria-label="close", title="close")="x"
+                h4= i18n.__("orders.success.title")
+                  span(style="color: #3d9dcb;")=" " + order_location
+                  span="!"
+                p=" "
+                p
+                  b= i18n.__("orders.success.reagent")
+                  span= order_agent
+                  br
+                  b= i18n.__("orders.success.catalog")
+                  span= order_catalog
+                  br
+                  b= i18n.__("orders.success.vendor")
+                  span= order_vendor
+          script="$(window).scrollTop($('#ordered').offset().top).scrollLeft($('#ordered').offset().left);"
+
+        if(searchResults != null && searchResults.length > 0)
+            div.searchResults()
+              div
+                  span(style="text-align: center")
+                    h3 #{i18n.__("search.resultstitle")}
+                        if searchformText
+                            span(style="color: #3d9dcb;")=" " + searchText
+                        if searchformTextCatalog
+                            span(style="color: #3d9dcb;")=" " + searchformTextCatalog
+                    h4 #{i18n.__("search.resultssubtitle")}
+              #labyokers.container.results(style="width:100%;")
+                div(id="ctl00_Div2" class="row rank").match
+                   - i = 1
+                   - className = ""
+                   div(class="table-responsive")                    
+                      table(id="rankTblSearch" class="table rankTbl")
+                        thead
+                         tr(class="you info-best" style="font-weight: bold")
+                          td(class="desktabonly")= 'id '
+                          td(class="wrapped")!= 'Reagent'
+                          td(class="desktabonly") #{i18n.__("search.table.catalog")}
+                          td(class="desktabonly") #{i18n.__("search.table.vendor")}
+                          td #{i18n.__("search.table.location")}
+                          td #{i18n.__("search.table.order")}
+                        tbody
+                         -var ob = searchResults
+                         - var j = 1
+                         -for(var prop in ob)
+                            - var i = prop % 2
+                            - var classname = "";
+                            - if(i==0)
+                                - classname = "active"
+                            - var agent = ob[prop].agent
+                            - var vendor = ob[prop].vendor
+                            - var catalognumber = ob[prop].catalognumber
+                            - var fullname = fullname
+                            - var sendemail = sendemail
+                            - var reqemail = ob[prop].email
+                            - var location = ob[prop].location  
+                            - var category = ob[prop].category  
+                            - var qty = ob[prop].quantity
+                            - var lab = ob[prop].lab                   
+                            tr(class=classname)
+                                td(class="desktabonly")= j
+                                td(class="wrapped") #{ob[prop].agent}
+                                td(class="desktabonly") #{ob[prop].catalognumber}
+                                td(class="desktabonly") #{ob[prop].vendor}
+                                td #{ob[prop].location}
+                                td
+                                  span(onclick="iosLight('#{agent}','#{vendor}','#{catalognumber}','#{reqemail}','#{location}','#{category}','#{qty}','#{lab}','#{lang}','#{ob[prop].lang}')", style="cursor:pointer")
+                                        img(src="images/cart.png", alt="Order now", title="Order now", style="border-width:0px; width: 24px; margin-top: 0px;")
+                            - j = j + 1
+                      script.
+                        $(document).ready(function() {
+                           $('#rankTblSearch').DataTable({
+                           language:{
+                                        processing: "#{i18n.__("datatable.processing")}",
+                                        search: "#{i18n.__("datatable.search")}",
+                                        lengthMenu: "#{i18n.__("datatable.lengthMenu")}",
+                                        info: "#{i18n.__("datatable.info")}",
+                                        infoEmpty: "#{i18n.__("datatable.infoEmpty")}",
+                                        infoFiltered: "#{i18n.__("datatable.infoFiltered")}",
+                                        infoPostFix: "",
+                                        loadingRecords: "#{i18n.__("datatable.loadingRecords")}",
+                                        zeroRecords: "#{i18n.__("datatable.zeroRecords")}",
+                                        emptyTable: "#{i18n.__("datatable.emptyTable")}",
+                                        paginate: {
+                                        first: "#{i18n.__("datatable.first")}",
+                                        previous: "#{i18n.__("datatable.previous")}",
+                                        next: "#{i18n.__("datatable.next")}",
+                                        last: "#{i18n.__("datatable.last")}"
+                                        },
+                                        aria: {
+                                        sortAscending: "#{i18n.__("datatable.sortAscending")}",
+                                        sortDescending: "#{i18n.__("datatable.sortDescending")}"
+                                        }
+                                    }
+                           });
+                        });
+        if(searchResults != undefined && searchResults.length == 0 && searchformText)
+            div.searchResults(id="results")
+                div(id="ctl00_Div2" class="row rank")
+                   div(class="table-responsive")
+                      span(style="text-align: center")
+                        h3="Sorry we could not find any location for your"
+                            span(style="color: #3d9dcb;")=" " + searchText
+                        h4="Try another chemical reagent!" 
+                         
+            script="$(window).scrollTop($('#results').offset().top).scrollLeft($('#results').offset().left);"
+
+        
+

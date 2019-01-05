@@ -1,0 +1,654 @@
+extends layout
+
+block content
+    - if(latestshares != null && latestshares != undefined)
+            style.
+                canvas{
+                    /*width: 100% !important;*/
+                    /*height: 90% !important;*/
+                    background-color: 'white' !important;
+                    background-image: url("/images/water2.jpg");
+                    position: relative;
+                    z-index: -2;
+                    /*position: relative;*/
+                    /*margin-top: -450px;*/
+                }
+
+            script(src="/javascripts/threejs/build/more/three.min.js")
+
+            script(src="/javascripts/threejs/examples/js/effects/AnaglyphEffect.js")
+
+            script(src="/javascripts/threejs/examples/js/Detector.js")
+
+            script(src="/javascripts/threejs/threex.dynamictexture.js")
+
+
+            script.
+                var obj = JSON.parse('#{JSON.stringify(latestshares)}'.replace(/&quot;/g, '"'));
+                var savefont;
+                var timer1 = 1;
+                var applyonce = false;
+                var bef = -1;
+                var objectlabs = [];
+                var keepPos = [];
+                console.log(obj);
+                for(var prop in obj)
+                    console.log(obj[prop].agent);
+                var wordwrap = function(long_string, max_char){
+
+                var sum_length_of_words = function(word_array){
+                var out = 0;
+                if (word_array.length!=0){
+                for (var i=0; i<word_array.length; i++){
+                var word = word_array[i];
+                out = out + word.length;
+                }
+                };
+                return out;
+                }
+
+                var split_out = [[]];
+                var split_string = long_string.split(' ');
+                for (var i=0; i<split_string.length; i++){
+                var word = split_string[i];
+
+                if ((sum_length_of_words(split_out[split_out.length-1]) + word.length) > max_char){
+                split_out = split_out.concat([[]]);
+                }
+
+                split_out[split_out.length-1] = split_out[split_out.length-1].concat(word);
+                }
+
+                for (var i=0; i<split_out.length; i++){
+                split_out[i] = split_out[i].join(" ");
+                }
+
+                return split_out.join('\n ');
+                };
+
+                var objects = [];
+                var meshes = [];
+                var raycaster = new THREE.Raycaster();
+                var mouse = new THREE.Vector2();
+                //document.addEventListener( 'touchstart', onDocumentMouseDown, false );
+                document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+                var currPos;
+                 $(document).bind('mousedown touchstart', function (e) {
+                    if (e.type == "touchstart") {
+                        currPos = window.event.touches[0].pageX;
+                        //alert("touched0: " + currPos);
+                        onDocumentMouseDown(e);
+                    } else {
+                        currPos = e.pageX;
+                        console.log("touched1: " + currPos);
+                    }
+                    clicked = true;
+
+                });
+                
+
+                var scene = new THREE.Scene();
+                scene.background = new THREE.Color( "white" );
+                //var camera = new THREE.PerspectiveCamera(400, window.innerWidth /(window.innerHeight), 1, 10000);
+                var camera = new THREE.PerspectiveCamera(400, window.innerWidth /(window.innerHeight), 1, 10000);
+
+                console.log("camera: " + window.innerWidth);
+
+
+
+                /*var img = new THREE.MeshBasicMaterial({
+                map:THREE.ImageUtils.loadTexture('/images/water3.jpg'),
+                opacity: 0.25, 
+                transparent: true, 
+                side: THREE.DoubleSide, 
+                depthWrite: false
+                });
+                */
+
+                var textureloader = new THREE.TextureLoader();
+                  textureloader.load("/images/water2.jpg", function(texture){
+                    var img = new THREE.MeshBasicMaterial({map: texture,
+                    opacity: 0.25, 
+                    transparent: true, 
+                    side: THREE.DoubleSide, 
+                    depthWrite: false,
+                    });
+                    img.map.minFilter = THREE.LinearFilter;
+                    // plane
+                    var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(window.innerWidth +150, window.innerHeight + 150),img);
+                    //plane.overdraw = true;
+                    scene.add(plane);
+                  });
+
+                //img.map.needsUpdate = true; //ADDED
+
+                
+
+                
+
+
+
+                var renderer = new THREE.WebGLRenderer( { antialias: true } );
+                renderer.setSize(window.innerWidth, window.innerHeight + 10);
+                renderer.setClearColor( 0xffffff );
+                document.body.appendChild(renderer.domElement);
+
+                var colors = [0x8a6d3b,0x3d9dcb,0x337ab7];
+
+                var geometry = new THREE.BoxGeometry(50, 50, 50, 10, 10, 10);
+                var geometry3 = new THREE.BoxGeometry(window.innerHeight/2.5, 2, 2, 2, 2, 2);
+                var geometry1 = new THREE.SphereBufferGeometry( 48, 16, 16);
+                var geometry2 = new THREE.BoxGeometry(300, 100, 100, 10, 10, 10)
+
+                var material = new THREE.MeshBasicMaterial({color: 0x8a6d3b, wireframe: true }); // yoke color
+                var material1 = new THREE.MeshBasicMaterial({color: 0x3d9dcb, wireframe: true }); // lab color
+                var material2 = new THREE.MeshBasicMaterial({color: 0x669900, wireframe: true });
+                var material13 = new THREE.MeshBasicMaterial({color: 0xcc6600, wireframe: true });
+                var material14 = new THREE.MeshBasicMaterial({color: 0x737373, wireframe: true });
+                var material15 = new THREE.MeshBasicMaterial({color: 0x337ab7, wireframe: true });
+                var material16 = new THREE.MeshBasicMaterial({color: 0xcc33ff, wireframe: true });
+                var material17 = new THREE.MeshBasicMaterial({color: 0x99004d, wireframe: true });
+                var material18 = new THREE.MeshBasicMaterial({color: 0x666699, wireframe: true });
+
+                var materials = [material, material1, material2, material13, material14, material15, material16, material17, material18];
+
+                var textMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+
+                var i = 0;
+                for(var prop in obj){
+                    var cube = new THREE.Mesh(geometry1, materials[i]);
+                    i++;
+                    //if(i > 2){
+                    //    i = 0;
+                    //}
+                    scene.add(cube);
+                    objects.push( cube );
+                    console.log(cube.material.uuid);
+                }
+
+                var material4 = new THREE.LineBasicMaterial({
+                    color: 0x8a6d3b
+                });
+
+                var geometry4 = new THREE.Geometry();
+                geometry4.vertices.push(
+                    new THREE.Vector3( 0, 0, 0 ),
+                    new THREE.Vector3( window.innerHeight/5, 0, 0 )
+                );
+                var bar = new THREE.Line( geometry4, material4 );
+                var geometry5 = new THREE.SphereBufferGeometry( 5, 16, 16);
+                var material5 = new THREE.MeshBasicMaterial({color: 0x3d9dcb, wireframe: true }); 
+                var circle = new THREE.Mesh(geometry5, material5);
+                
+                var cube3 = new THREE.Mesh(geometry2, material);
+
+                for(var prop in obj){
+                    var mesh;
+                    meshes.push(mesh);
+                }
+                console.log("pushing mesh: " + meshes);
+
+                var loader = new THREE.FontLoader();
+
+                loader.load( '/javascripts/threejs/fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+                savefont = font;
+
+                var t = "Exosome";
+
+                //for(var prop in obj)
+                //    console.log(obj[prop].agent);
+
+                var test_string = "this is a long string that should be word wrapped, hopefully";
+                console.log(wordwrap(test_string, 5));
+
+                var textGeo = new THREE.TextGeometry( wordwrap(obj[0].agent, 20), {font: font, size: 10,height: 3} );
+
+                var textGeo2 = new THREE.TextGeometry( wordwrap(obj[1].agent, 20), {font: font, size: 10,height: 3} );
+
+                var textGeo3 = new THREE.TextGeometry( wordwrap(obj[2].agent, 20), {font: font, size: 10,height: 3} );
+
+                
+                //var timer0 = 0.00007 * Date.now();
+                var timer0 = 0.00007 * 123456789;
+                var x = 0;
+                var x1 = 0;
+                var y = 200 + (window.innerHeight) * Math.cos( timer0 * 3.1);
+                var y1 = 0;
+                var diff = [1, -1];
+                var j = 0;
+                var offset = window.innerWidth/10;
+
+                for(var prop in meshes){
+                    console.log("y: " + y);
+                    console.log("x: " + x);
+                    console.log("prop: " + prop);
+                    console.log("obj[prop].agent: " + obj[prop].agent);
+                    var text = new THREE.TextGeometry( wordwrap(obj[prop].agent, 10), {font: font, size: 8,height: 2} );
+                    meshes[prop] = new THREE.Mesh( text, textMaterial );
+
+
+                //console.log("meshes: " + meshes);
+               
+                    objects[prop].position.y = y;
+                    objects[prop].position.x = x;
+
+                    meshes[prop].position.x = x - 20;
+                    meshes[prop].position.y = y -10; //- 65;
+                    meshes[prop].position.z = 0;
+
+                    if(prop < (objects.length/2 - 1)){
+                        console.log("y_0: " + y);
+                        console.log("positive " + offset);
+                        x += offset;
+                        y += offset;
+                        console.log("y_1: " + y);
+                    } else {
+                        console.log("negative");
+                        x1 = x1 - offset;
+                        x = x1;
+                        y1 = y1 - offset;
+                        y = y1;
+                    }
+                    
+                    y = 200 + (prop/objects.length + 2) * ((window.innerHeight/(2*objects.length))) * diff[j];
+                    
+                    j++;
+                    if(j>1){
+                        j = 0;
+                    }
+                    scene.add( meshes[prop] );
+                }
+                console.debug(meshes);
+
+                } );
+
+
+
+                camera.position.z = 1000;
+                camera.position.y = window.innerHeight * 0.15;
+                console.log("height camera: " + window.innerHeight * 0.1);
+
+                var countts = 0;
+                var count = 0;
+
+
+                function onDocumentMouseDown( event ) {
+                    //console.debug(event);
+                    //event.preventDefault();
+                    
+
+                    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+                    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+                    //window.event.touches[0].pageX
+
+                    console.log("touched00: " + window.event.targetTouches);
+                    if(window.event.targetTouches){
+                    console.debug(window.event);
+                    console.log("targetTouch: " + window.event.targetTouches[0].pageX);
+                    mouse.x = +(window.event.targetTouches[0].pageX / renderer.domElement.clientWidth) * 2 - 1;
+                    mouse.y = -(window.event.targetTouches[0].clientY / renderer.domElement.clientHeight) * 2 + 1;
+                    }
+                    
+
+                    console.log("mouse x: " + mouse.x);
+                    console.log("mouse y: " + mouse.y);
+
+                    raycaster.setFromCamera( mouse, camera );
+
+                    var intersects = raycaster.intersectObjects( objects );
+                    console.debug(intersects);
+                    console.debug(raycaster);
+
+                    var particleMaterial = new THREE.PointsMaterial({
+                      color: 0x000000
+                    });
+                    console.log("int length: " + intersects.length);
+                    if ( intersects.length > 0 ) {
+                        
+
+                        var col = intersects[ 0 ].object.material.color.getHex();
+                        var int = intersects[ 0 ];
+                        console.log("inter: " + intersects[ 0 ].object.pos);
+                        console.log("interlength: " + intersects[ 0 ].object.pos == undefined);
+                        if(intersects[ 0 ].object.pos == undefined){
+                        intersects[ 0 ].object.pos = count;
+                        }
+                        console.debug(intersects[ 0 ].object);
+                        //console.log(intersects[ 0 ].object.name);
+                        //console.debug(savefont);
+                        var rand = Math.floor((Math.random() * 3));
+                        var coloring = colors[rand];
+                        intersects[ 0 ].object.material.color.setHex( colors[rand] );
+                        if(intersects[ 0 ].object.geometry == geometry){
+                        intersects[ 0 ].object.geometry = geometry1;
+                        } else {
+                        intersects[ 0 ].object.geometry = geometry;
+                        }
+
+                        
+                        //if(count > objects.length/2 - 2){
+
+                        if(count < objects.length){
+                        
+                        //console.log("name: " + intersects[ 0 ].object.name);
+                        //console.log("savefont: " + savefont);
+                        console.log("inside intersect: " + intersects[ 0 ].object.uuid);
+                        if(keepPos.indexOf(intersects[ 0 ].object.uuid) == -1){
+                        keepPos.push(intersects[ 0 ].object.uuid);
+                        var text = new THREE.TextGeometry( wordwrap(intersects[ 0 ].object.name, 10), {font:savefont, weight: "bold", size:10, height:3} );
+                        var textMaterial1 = new THREE.MeshBasicMaterial( { color: colors[rand] } );
+                        var t = new THREE.Mesh( text, textMaterial1 );
+                        //console.log("coloring: " + colors[rand]);
+                        
+                        countts +=6.2832/objects.length;
+                        t.position.x = 200*Math.sin(countts) - 35; //- window.innerWidth/18; //200*Math.cos(countts) + 0; // -35
+                        t.position.y = 200*Math.cos(countts) + window.innerHeight/4; // 4.66
+                        //150
+
+                        //t.position.x = (window.innerWidth / 1.5) + countts * 25;
+                        //t.position.y = (window.innerHeight / 1.5) + countts * 25;
+                        t.pos = intersects[ 0 ].object.pos;
+                        
+                        scene.add( t );
+                        objectlabs.push(t);
+                        count++;
+                        console.log("added: " + intersects[ 0 ].object.uuid + " - "+JSON.stringify(keepPos));
+                        if(count == objects.length && bar){
+                            scene.add(bar);
+                            scene.add(circle);
+
+                            var pic_real_width, pic_real_height;
+                            var img = $(".yokelogopop")[0];
+                            $("<img/>")
+                                .attr("src", $(img).attr("src"))
+                                .load(function() {
+                                    pic_real_width = this.width/5.86;
+                                    pic_real_height = pic_real_width * 0.6866;
+                                    console.log("pic_real_width: " + pic_real_width);
+                                    console.log("pic_real_height: " + pic_real_height);
+
+                                    /*$( ".yokelogopop" ).effect( "size", {
+                                        to: { width: pic_real_width, height: pic_real_height }
+                                      }, 1000 );*/
+                                    $('.yokelogopop').css( "width", (pic_real_width) );  
+                                    $('.yokelogopop').css( "height", (pic_real_width * 0.6866) );     
+                                });
+
+                        }
+                        }
+                        //console.log("tpositiony: " + t.position.y);
+                        //console.log("tpositionx: " + t.position.x);
+                        //console.log("count: " + count);
+                        //console.log("height: " + window.innerHeight);
+                        //console.log("width: " + window.innerWidth);
+                        
+
+                        if(count == 1){
+                            //$('.textintro').css( "top", (-0.5 * window.innerHeight) + 80 );
+                            $('.textintro').css( "display", "none");
+                            console.log("move textintro");
+                        }
+
+                        }
+
+                       /* var particle = new THREE.Sprite( particleMaterial );
+                        particle.position.copy( intersects[ 0 ].point );
+                        particle.scale.x = particle.scale.y = 100;
+                        scene.add( t );
+                        */
+
+                    }
+
+                    /*
+                    // Parse all the faces
+                    for ( var i in intersects ) {
+
+                        intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+
+                    }
+                    */
+                }
+
+                window.addEventListener( 'resize', onWindowResize, false );
+                function onWindowResize(){
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize( window.innerWidth, window.innerHeight );
+                    $('.yokelogopop').css( "margin-top", (-1.2 * window.innerHeight - 50) );
+                    $('.textintro').css( "top", (-0.5 * window.innerHeight - 10) );
+
+                    var pic_real_width, pic_real_height;
+                    var img = $(".yokelogopop")[0];
+                    $("<img/>")
+                        .attr("src", $(img).attr("src"))
+                        .load(function() {
+                            pic_real_width = this.width;   // Note: $(this).width() will not
+                            pic_real_height = this.height; // work for in memory images.
+                            //console.log("pic_real_width: " + pic_real_width);
+                            //console.log("pic_real_height: " + pic_real_height)
+                            //$('.yokelogopop').css( "width", (pic_real_width/2.93) );     
+                        });
+                    
+                    //$('.yokelogopop').css( "height", (window.innerHeight/3) );
+                }
+
+                function render() {
+                requestAnimationFrame(render);
+
+                var timer = 0.00007 * Date.now();
+
+                var timer0 = 0.00007 * Date.now();
+                var x = 0;
+                var y = (window.innerHeight / 2) * Math.cos( timer0 * 3.1);
+                var diff = [1, -1];
+                var j = 0;
+                var x1 = 0;
+                //console.log("cubey: " + y);
+                for(var prop in objects){
+                    var cube = objects[prop];
+                    cube.name = obj[prop].lab;
+                    cube.rotation.x += 0.02;
+                    cube.rotation.y += 0.02;
+                    cube.position.y = y;
+
+                    var m = meshes[prop];
+
+                    if ( meshes[prop] ) {
+                    meshes[prop].position.y = y - 65;
+                    }
+                    //meshes[prop].position.z = 0;
+                    if(prop == 0){
+                        prop = 1.5;
+                    }
+
+                    y = (window.innerHeight / 2) * Math.cos( timer0 * prop * diff[j]);
+
+                    j++;
+                    if(j>1){
+                        j = 0;
+                    }
+
+                }
+                if(bar && count >= 9){
+                    var lineAngle = - 1 * (/*60 * */ Math.PI * timer1) / 180;
+                    if(count == 9){
+                        lineAngle = 0;
+                    }
+                    count++;
+                    var angle = (lineAngle * 180) / (timer1)
+                    bar.rotation.z = lineAngle;
+                    bar.position.y = window.innerHeight/4 + 10;
+
+                    //console.log("timer1: " + timer1);
+                    timer1 = timer1 + 40/180;
+                    var angle1 = ((timer1/360)%1) * 360
+                    //console.log("angle1: " + angle1);
+
+                    
+
+                    var findx = objects.filter(function(x) {
+                        var rad = Math.atan2(x.position.y, x.position.x);
+                        var deg = rad * (180 / Math.PI);
+                        //if(angle  < (deg + 40) &&  angle  > (deg - 40)){
+                        //console.log('filter this: rad: ' + rad + ' - deg: ' + deg + ' - angle: ' + angle + ' - x:' + x.position.x + " - y: " + x.position.y + " - z: " + x.position.z + " - barz: " + bar.position.z + " - bary: " + bar.position.y + " - barx: " + bar.position.x + " - barrotz: " + bar.rotation.z );
+                        
+                        //console.log('pos: '+x.pos+' - posx: ' + x.position.x + ' - posy: ' + x.position.y + ' - name: ' + x.name + ' - rad: ' + rad + ' - deg: ' + deg + ' - angle1: ' + angle1 + ' - timer1: ' + timer1);
+                        //console.debug(x);
+                        
+
+                        if(angle1>0 && angle1<30 && x.pos == 2){
+                            //console.log("pos: 2");
+                            
+                            return x;
+                        } else if(angle1>30 && angle1<70 && x.pos == 3){
+                        //console.log("pos: 3");
+                        
+                            return x;
+                        } else if(angle1>70 && angle1<110 && x.pos == 4){
+                        //console.log("pos: 4");
+                        
+                            return x;
+                        } else if(angle1>110 && angle1<150 && x.pos == 5){
+                        //console.log("pos: 5");
+                        
+                            return x;
+                        } else if(angle1>150 && angle1<190 && x.pos == 6){
+                        //console.log("pos: 6");
+                        
+                            return x;
+                        } else if(angle1>190 && angle1<230 && x.pos == 7){
+                        //console.log("pos: 7");
+                        
+                            return x;
+                        } else if(angle1>230 && angle1<270 && x.pos == 8){
+                        //console.log("pos: 8");
+                        
+                            return x;
+                        } else if(angle1>270 && angle1<310 && x.pos == 0){
+                        //console.log("pos: 0");
+                        
+                            return x;
+                        } else if(angle1>310 && angle1<350 && x.pos == 1){
+                        //console.log("pos: 1");
+                        
+                            return x;
+                        }
+
+                        //pos 2: entre 80 et 120, angle1>0 && angle1<40-10
+                        //pos 3: entre 120 et 160, angle1>40*(3-2)-10 and angle1<40-10+40
+                        //pos 4: entre 160 et 200, angle1>40 * (4-2)-10 and angle1<40-10+40+40
+                        //pos 5: entre 200 et 240, angle1>40*(5-2)-10 and angle1<40-10+40+40+40
+                        //pos 6: entre 240 et 280, angle1>40*(6-2)-10 and angle1<40-10+40+40+40+40
+                        //pos 7: entre 280 et 320, angle1>40*(7-2)-10 and angle1<40-10+40+40+40+40+40
+                        //pos 8: entre 320 et 360, angle1>40*(8-2)-10 and angle1<40-10+40+40+40+40+40+40
+                        //pos 0: entre 0 et 40, angle1>40*(pos+7)-10 and angle1<40-10+40+40+40+40+40+40+40
+                        //pos 1: entre 40 et 80, angle1>40*(pos+7)-10 and angle1<40-10+40+40+40+40+40+40+40+40
+
+                        //timer: 104516120.24398999
+                        //pop:387 timer: 104516120.24510999
+                        //pop:387 timer: 104516120.2463
+
+
+
+                        //}
+                        //console.debug(x);
+                        //return (angle1  < (deg + 40) &&  angle1  > (deg - 40));
+                    });
+
+                    if(findx.length > 0){
+
+                    var findlabx = objectlabs.filter(function(x) {
+                        if(x.pos == findx[0].pos){
+                            return x;
+                        }
+                    });
+
+                    //console.log(' - pos: ' + findx[0].pos);
+                    findx[0].material.color.setHex( 0xcc3300 );
+                    findlabx[0].material.color.setHex( 0xcc3300 );
+                    //findx[0].material.color.setHex( 0xff0000 );
+
+                    
+
+                    var findpreviousx = objects.filter(function(x) {
+                        if(x.pos == 8 && findx[0].pos == 0){
+                            return x;
+                        } else if(x.pos == findx[0].pos - 1){
+                            return x;
+                        }
+                    });
+
+                    var findlabpreviousx = objectlabs.filter(function(x) {
+                        if(x.pos == 8 && findx[0].pos == 0){
+                            return x;
+                        } else if(x.pos == findx[0].pos - 1){
+                            return x;
+                        }
+                    });
+
+                    
+                    
+                    
+                    
+                    
+                    if(findpreviousx.length > 0 && bef != findpreviousx[0].pos){
+                        bef = findpreviousx[0].pos;
+                        applyonce = true;
+                        //console.log("applyonce for " + bef);
+                    }
+                    if(applyonce){
+                    applyonce = false;
+                    var rand = Math.floor((Math.random() * 3));
+                    var coloring = colors[rand];
+                    findpreviousx[0].material.color.setHex( coloring );
+                    findlabpreviousx[0].material.color.setHex( coloring );
+
+                    
+                    //console.log(findlabpreviousx[0]);
+                    }
+                    }
+                    
+
+                }
+
+                if(circle){
+                    circle.position.y = window.innerHeight/4 + 10;
+                }
+
+                //console.log("cube1.position.y: " + cube1.position.y);
+
+                //console.log("cube2.position.y: " + cube2.position.y);
+
+
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+                cube.rotation.z += 0.01;
+
+                cube3.rotation.y = 10;
+                //cube3.rotation.y = 20;
+                //cube3.rotation.z = 0.01;
+
+                renderer.render(scene, camera);
+                };
+
+                render();
+
+
+
+    div(style="text-align: center;position: relative;z-index: 1;height:0px;")
+        a(href="/search", class="sunlogos")
+            img(src="/images/logo_clear.png", alt="The Yoke",  title="Go to LabYoke", class="yokelogopop", id="yokelogopop", style="z-index: 1;position: relative;")
+        p(class="textintro", style="z-index: 1;position: relative;line-height: 130%;font-weight: bold;margin-left:10px;margin-right:10px;margin-bottom: -100px;")
+            i(style="/*background-color: white;*/")!="Hello There!<br/>These spheres represent the <span style='color:#8a6d3b'><b>lastest transactions</b></span>!<br/>Click on a <span style='color:#3d9dcb'>sp</span><span style='color:#8a6d3b'>he</span><span style='color:#337ab7'>re</span>!<br/>Meanwhile our logo always leads you to <a href='/search'><span style='color:#3d9dcb'><b>LabYoke</b></span></a>."
+    script.
+        $('.yokelogopop').css( "margin-top", (-1.2 * window.innerHeight - 50) );
+        $('.textintro').css( "top", (-0.5 * window.innerHeight - 10 + 50) );
+        $('body').css( "background-color", "#e6f5fa" );
+        $('body').css( "padding-top", "0px" );
+        //$('body').css( "background-color", "#8a6d3b" );
+        //$('canvas').css( "opacity", "0.6" );
+        console.log("top: " + window.innerHeight);
+        console.log($(".textinto").css("top"));

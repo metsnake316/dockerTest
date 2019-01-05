@@ -1,0 +1,33 @@
+{
+"bot.confused" : "Vous avez dit : **%s**. Je ne suis pas certain d'avoir compris. Vous pouvez me demander de l' **aide** ou **commander *réactif*** ou **annuler *réactif* en provenance de *email*** ",
+"bot.cancel": "Absolument, J'annule votre commande.",
+
+"bot.order": "Absolument! En préparation...",
+"bot.Order.title": "Commande",
+"bot.Order.subtitle": "Veuillez confirmer la commande suivante:",
+"bot.order.reagent": "Réactif",
+"bot.order.email": "Email",
+"bot.order.vendor": "Vendeur",
+"bot.order.catalognumber": "Numéro de Catalogue",
+"bot.order.button": "Oui",
+"bot.order.invalidsearch": "Le réactif demandé est invalide. Veuillez réessayer et entrer: **Commande *réactif***.",
+"bot.order.noresults": "Aucun réactif n'est disponible pour une commande de **%s**.",
+
+"bot.ciao": "Au revoir.",
+"bot.hi": "Oh Salut!",
+"bot.thanks": "Je vous en prie. Je suis toujours là pour vous.",
+"bot.help": "Vous demandez de l'aide. Accédez á notre section [aide](https://team-labyoke.herokuapp.com/help) pour un florilége d'informations et vidéos tutorielles.",
+
+"bot.ordersuccessful": "Votre commande et un email de confirmation ont été envoyé avec succès.",
+"bot.ordernotsuccessful": "Une erreur est survenue. Veuillez ré-essayer une autre commande.",
+
+"bot.Cancel.title": "Annulation de Commande",
+"bot.Cancel.subtitle": "Veuillez confirmer l'annulation de commande suivante:",
+"bot.cancel.invalidsearch": "Le réactif à annuler est invalide. Veuillez réessayer et entrer: **Annuler *réactif* de *email***.",
+"bot.cancel.noresults": "Désolé je n'ai pas pu trouver le réactif à annuler: **%s**.",
+"bot.cancelsuccessful": "Votre annulation et un email de confirmation ont été envoyé avec succès.",
+"bot.cancelnotsuccessful": "Une erreur est survenue. Veuillez ré-essayer.",
+
+"bot.greet": "Salut! Je m'appelle Professeur L. Que puis-je faire pour vous aider? Dites **aide** ou **commander *réactif*** ou **annuler commande *réactif* en provenance de *email***."
+
+}

@@ -1,0 +1,39 @@
+extends layout
+
+block content
+
+    div(class="container login front admin-login")
+         div(class="admin-login-one")
+             a(href="/admin/querytool")
+                img(src="/images/labadmin.png", alt="The Yoke",  title="Yoke", class="yokelogo")
+             h1(class="font-30")!= i18n.__("sysadmin.hello")
+             - if(loggedlabyoker != null && loggedlabyoker != "")
+                p(class="adminlogin-desc")!=i18n.__("sysadmin.desc.one") + "<span class='font-15'><b>" + loggedlabyoker + "</b></span>." + i18n.__("sysadmin.desc.two")
+             - else
+                p(class="adminlogin-desc")!= i18n.__("sysadmin.desc")
+
+         div(id="ctl00_Div2" class="frontdiv results3")
+           div
+            if message
+                div(class="alert alert-danger fade in alert-dismissable")!= message
+            form(action="/admin/login" method="post")
+                div(class="textentry")
+                    span(class="fa fa-user admin-login-user")
+                    input(name="user" type="text" id="user" class="form-control form-control0 placeholderColor" placeholder="Username")
+                div(class="textentry")
+                    input(name="pass" type="password" id="pass" class="form-control form-control0 placeholderColor" placeholder="Password")
+                    span(class="fa fa-key admin-login-key")
+                div(class="buttons")
+                    button.btn.btn-success.btn-lg.btn-block.shadow.resizebutton(type='submit')!= i18n.__("sysadmin.enter")
+            div(class="margintop-10 marginbottom-65")
+                span(class="floatleft")
+                    - if(loggedlabyoker != null && loggedlabyoker != "")
+                        a(href="https://team-labyoke.herokuapp.com/", class="z-index-10")= i18n.__("sysadmin.return")
+                    - else
+                        a(href="https://team-labyoke.herokuapp.com/", class="z-index-10")= i18n.__("sysadmin.labyoke")
+                span(class="float-right")
+                    a(href="/forgot", class="z-index-10")=i18n.__("sysadmin.forgotpassword")
+    div(class="help")
+       a(href="/help" title=i18n.__("sysadmin.help"))
+        img(src="/images/bouee5.png", alt="Help", title=i18n.__("sysadmin.help"), class="helplogin")
+        script(type="text/javascript" src="/js/admin-login-utils.js")

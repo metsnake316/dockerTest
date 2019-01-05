@@ -1,0 +1,302 @@
+extends layout
+
+block content
+	script.
+		var recenter = 0;
+	div(class="zoomnow container login2 marginbottom margintop container2 moveFromLeft")
+		h1
+			span(class="fa fa-file-text lightyokecolor")
+			span!= i18n.__("reports.title")
+			span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+		p
+			span(class="restrictreporttext float-left")!= i18n.__("reports.subtitle")
+			span(class="restrictreporttext float-right")!= i18n.__("reports.subtitle2")
+
+			- var now = (new Date())
+			- now = (now.getMonth() + 1) + "/" + now.getDate() + "/" + now.getFullYear()
+		- var selResultsMoney = resultsMoney
+		- var checkedstrMoney = false;
+		- if(section !=null && section.length>0 && section == "money")
+			- checkedstrMoney = true
+		- var selResultsOrders = resultsOrders
+		- var checkedstrOrders = false;
+		- if(section !=null && section.length>0 && section == "orders")
+			- checkedstrOrders = true
+		- var selResultsShares = resultsShares
+		- var checkedstrShares = false;
+		- if(section !=null && section.length>0 && section == "shares")
+			- checkedstrShares = true
+		- var selResultsInsuff = resultsInsuff
+		- var checkedstrInsuff = false;
+		- if(section !=null && section.length>0 && section == "insuff")
+			- checkedstrInsuff = true
+		form(action="reportSelect", method="post", class="adjustwidthreports displaynone")
+			div(class="buttonss")
+				span(class="fa fa-sort reports-sort")
+				select(name="reportSelect" type="text" id="reportSelect" class="form-control form-control0 reports-select" placeholder=i18n.__("reports.form.select"))
+					option(value="reportNone",class="font-bold")=i18n.__("reports.form.option1")
+					option(value="reportMoney" selected=(checkedstrMoney===true ? "selected" : undefined))=i18n.__("reports.form.option2")
+					option(value="reportOrders" selected=(checkedstrOrders===true ? "selected" : undefined))=i18n.__("reports.form.option3")
+					option(value="reportShares" selected=(checkedstrShares===true ? "selected" : undefined))=i18n.__("reports.form.option4")
+					option(value="reportInsuff" selected=(checkedstrInsuff===true ? "selected" : undefined))=i18n.__("reports.form.option5")
+		div(class="containerreports")
+			div(class="labelbuttons reportlabels")
+				input(id="toggle" type="checkbox" class="inputexpand")
+				label(for="toggle", class="labelexpand animated fadeInUp reports-labelmoney")!= i18n.__("reports.label.savings")
+				input(id="toggleedit" type="checkbox" class="inputexpandedit")
+				label(for="toggleedit", class="labelexpandedit animated fadeInDown reports-labelorders")!= i18n.__("reports.label.orders")
+				label(class="labelexpandmood animated fadeInUp reportweek reports-labelweek")!= i18n.__("reports.label.week")
+				input(id="toggleadd" type="checkbox" class="inputexpandadd")
+				label(for="toggleadd", class="labelexpandadd animated fadeInDown reports-labelorders")!= i18n.__("reports.label.inventory")       
+				input(id="togglerules" type="checkbox" class="inputexpandrules")
+				label(for="togglerules", class="labelexpandrules animated fadeInUp reports-labelinsuff")!= i18n.__("reports.label.insuff")
+				div(class="threepointssep threedown")
+			div(class="reportSlot") &nbsp;
+			div(class="restrictreport restrictreport2 displaynone")
+				div(class="reportMoneys results2 resultsshadow reports-border-radius reports-container displaynone", id="reportMoney")
+					h3
+						span(class="fa fa-file-text reports-text")
+						span= i18n.__("reports.money.title")
+					p= i18n.__("reports.money.subtitle")
+					- var datefrom_money = datefromMoney
+					- var dateto_money = datetoMoney
+					- var file_money = i18n.__("reports.money.file") + " " + datefrom_money + i18n.__("reports.file.to") + dateto_money
+					- var message_fail_share = i18n.__("reports.money.message.fail")
+					- var message_fail_date_share = i18n.__("reports.money.message.date.fail")
+					- var message_success_money = i18n.__("reports.money.message.success1") + datefrom_money + i18n.__("reports.money.message.success2") + dateto_money + i18n.__("reports.money.message.success3")
+					- if(datefromMoney == null || datefromMoney == undefined || datefromMoney == "")
+						- datefrom_money = i18n.__("reports.money.message.datefrommoney")
+						- dateto_money = ""
+						- message_success_money = i18n.__("reports.money.message.successmoney")
+						- file_money = i18n.__("reports.money.file_all") 
+					if (addMessageMoney == 'failure')
+						div(class="alert alert-danger-report alertshadow alert-shares")!= message_fail_share
+					if (addMessageMoney == 'wrongdate')
+						div(class="alert alert-danger-report alertshadow alert-shares")!= message_fail_date_share
+					if (addMessageMoney == 'success')
+						div(class="alert alert-success-report fade in alert-dismissable alertshadow alert-shares")!= message_success_money
+					div
+						form(action="reportMoney", method="post", id="formreportMoney")
+							div(class="buttonss")
+								label(class="reports-datefrom")= i18n.__("reports.money.datefrom")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateFromMoney" type="tel" id="reportDateFromMoney" class="form-control form-control0 reports-date-money adddatepicker")
+								
+								label(class="reports-datefrom")= i18n.__("reports.money.dateto")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateToMoney" type="tel" id="reportDateToMoney" class="form-control form-control0 reports-date-money adddatepicker")
+
+								label(class="reports-dept")!= i18n.__("reports.money.lab.label") + dept + "</span>:"
+								span(class="fa fa-sort reports-sort")
+								select(name="reportLabMoney" type="text" id="reportLabMoney" class="form-control form-control0 reports-insuff-select" placeholder=i18n.__("reports.money.labselect"))
+									option(value="all")=i18n.__("reports.money.lab.option")
+									if(categories != undefined)
+										- var ob = categories
+										- for(var prop in ob)
+											- var lab = ob[prop].labname
+											option(value=lab) #{lab}
+								div(class="reportlabelwidth hideinapp")
+									label(class="reports-show")=i18n.__("reports.money.show")
+								div(class="reportlabelwidth reportlabelwidth3")
+									label(for="reportAgentMoney", class="reports-reagent")=i18n.__("reports.money.reagent")
+									div(class="checkboxThree")
+										input(type="checkbox" name="reportAgentMoney" id="reportAgentMoney" value="reagent")
+										label(class="labelcheck shadow",for="reportAgentMoney")
+								div(class="reportlabelwidth reportlabelwidth3")
+									label(for="reportVendorMoney",class="reports-vendor")=i18n.__("reports.money.vendor")
+									div(class="checkboxThree")
+										input(type="checkbox" name="reportVendorMoney" id="reportVendorMoney" value="vendor")
+										label(class="labelcheck shadow",for="reportVendorMoney")
+								div(class="reportlabelwidth reportlabelwidth3")
+									label(for="reportCatalogMoney",class="reports-catalog")=i18n.__("reports.money.catalog")
+									div(class="checkboxThree")
+										input(type="checkbox" name="reportCatalogMoney" id="reportCatalogMoney" value="catalogNumber")
+										label(class="labelcheck shadow",for="reportCatalogMoney")
+								div(class="reports-buttons-insuff")
+									button.btn.btn-success.btn-lg.btn-block.reportbutton2.reportbutton3.shadow(type="submit",value="Report",name="submit")= i18n.__("reports.money.button")
+							if(resultsMoney != null && resultsMoney !="")
+								script(type="text/javascript" src="/javascripts/jspdf.js")
+								script(type="text/javascript" src="/javascripts/xlsx.core.min.js")
+								script(type="text/javascript" src="/javascripts/Blob.js")
+								script(type="text/javascript" src="/javascripts/FileSaver.js")
+								script(type="text/javascript" src="/javascripts/savexl.js")
+								script.
+									var var_resultsMoney = "#{resultsMoney}", var_reports_download_pdf = "#{i18n.__('reports.download.pdf')}",var_reports_download_excel = "#{i18n.__('reports.download.excel')}", var_dataMoney = '!{dataMoney}', var_fileMoney = "#{file_money}",var_message = "#{addMessageMoney}"; 
+								script(type="text/javascript" src="/js/reports-utils-money.js")
+								- resultsMoney = ""
+
+				div(class="reportOrderss results2 resultsshadow reports-container displaynone", id="reportOrders")
+					h3
+						span(class="fa fa-file-text reports-text")
+						span= i18n.__("reports.orders.title")
+					p= i18n.__("reports.orders.subtitle")
+					- var datefrom_orders = datefromOrders
+					- var dateto_orders = datetoOrders
+					- var file_orders = i18n.__("reports.orders.file") + " " + datefrom_orders + i18n.__("reports.file.to") + dateto_orders
+					- var message_fail_order = i18n.__("reports.orders.message.fail")
+					- var message_fail_date_order = i18n.__("reports.orders.message.date.fail")
+					- var message_success_order = i18n.__("reports.orders.message.success1") + datefrom_orders + i18n.__("reports.orders.message.success2") + dateto_orders + i18n.__("reports.orders.message.success3")
+					- if(datefromOrders == null || datefromOrders == undefined || datefromOrders == "")
+						- datefrom_orders = i18n.__("reports.orders.lab.option")
+						- dateto_orders = ""
+						- message_success_order = i18n.__("reports.orders.message.successorders")
+						- file_orders = i18n.__("reports.orders.file_all") 
+					if (addMessageOrders == 'failure')
+						div(class="alert alert-danger-report alertshadow alert-orders")!= message_fail_order
+					if (addMessageOrders == 'wrongdate')
+						div(class="alert alert-danger-report alertshadow alert-orders")!= message_fail_date_order
+					if (addMessageOrders == 'success')
+						div(class="alert alert-success-report fade in alert-dismissable alertshadow alert-orders")!= message_success_order
+					div
+						form(action="reportOrders", method="post")
+							div(class="buttonss")
+								label(class="reports-datefrom")=i18n.__("reports.orders.datefrom")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateFromOrders" type="tel" id="reportDateFromOrders" class="form-control form-control0 reports-input-tel adddatepicker")
+								
+								label(class="reports-datefrom")=i18n.__("reports.orders.dateto")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateToOrders" class="reports-input-tel" type="tel" id="reportDateToOrders" class="form-control form-control0 adddatepicker")
+								
+								label(class="reports-dept")!= i18n.__("reports.orders.lab.label") + dept + "</span>:"
+								span(class="fa fa-sort reports-sort")
+								select(name="reportLabOrders" type="text" id="reportLabOrders" class="form-control form-control0 reports-orders-select" placeholder=i18n.__("reports.orders.labselect"))
+									option(value="all")= i18n.__("reports.orders.lab.option")
+									if(categories != undefined)
+										- var ob = categories
+										- for(var prop in ob)
+											- var lab = ob[prop].labname
+											option(value=lab) #{lab}
+								div(class="reports-buttons")
+									button.btn.btn-success.btn-lg.btn-block.reportbutton2.reportbutton3.shadow(type="submit",value="Report",name="submit")= i18n.__("reports.orders.button")
+							span(id="triggerSafariOrder")
+							if(resultsOrders != null && resultsOrders !="")
+								script(type="text/javascript" src="/javascripts/jspdf.js")
+								script(type="text/javascript" src="/javascripts/xlsx.core.min.js")
+								script(type="text/javascript" src="/javascripts/Blob.js")
+								script(type="text/javascript" src="/javascripts/FileSaver.js")
+								script(type="text/javascript" src="/javascripts/savexl.js")
+								script.
+									var var_resultsOrders =  "#{resultsOrders}", var_dataOrders = '!{dataOrders}', var_reports_download_pdf = "#{i18n.__("reports.download.pdf")}", var_reports_download_excel = "#{i18n.__("reports.download.excel")}",var_fileOrders = "#{file_orders}" ,var_message = "#{addMessageOrders}"; 
+								script(type="text/javascript" src="/js/reports-utils-orders.js")
+								- resultsOrders = ""
+				div(class="reportSharess results2 resultsshadow reports-container displaynone", id="reportShares")
+					h3
+						span(class="fa fa-file-text reports-text")
+						span= i18n.__("reports.shares.title")
+					p= i18n.__("reports.shares.subtitle")
+					- var datefrom_shares = datefromShares
+					- var dateto_shares = datetoShares
+					- var file_shares = i18n.__("reports.shares.file") + " " + datefrom_shares + i18n.__("reports.file.to") + dateto_shares
+					- var message_fail_share = i18n.__("reports.shares.message.fail")
+					- var message_fail_date_share = i18n.__("reports.shares.message.date.fail")
+					- var message_success_share = i18n.__("reports.shares.message.success1") + datefrom_shares + i18n.__("reports.shares.message.success2") + dateto_shares + i18n.__("reports.shares.message.success3")
+					- if(datefromShares == null || datefromShares == undefined || datefromShares == "")
+						- datefrom_shares = i18n.__("reports.shares.lab.option")
+						- dateto_shares = ""
+						- message_success_share = i18n.__("reports.shares.message.successshares")
+						- file_shares = i18n.__("reports.shares.file_all")
+					if (addMessageShares == 'failure')
+						div(class="alert alert-danger-report alertshadow alert-inv")!= message_fail_share
+					if (addMessageShares == 'wrongdate')
+						div(class="alert alert-danger-report alertshadow alert-inv")!= message_fail_date_share
+					if (addMessageShares == 'success')
+						div(class="alert alert-success-report fade in alert-dismissable alertshadow alert-inv")!= message_success_share
+					div
+						form(action="reportShares", method="post", id="formreportShares")
+							div(class="buttonss")
+								label(class="reports-datefrom")= i18n.__("reports.shares.datefrom")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateFrom" type="tel" id="reportDateFrom" class="form-control form-control0 reports-input-date adddatepicker")
+								
+								label(class="reports-datefrom")= i18n.__("reports.shares.dateto")
+								//span(class="fa fa-calendar reports-calendar")
+								input(name="reportDateTo" type="tel" id="reportDateTo" class="form-control form-control0 reports-input-date adddatepicker")
+								
+								div(class="reports-buttons")
+									button.btn.btn-success.btn-lg.btn-block.reportbutton2.reportbutton3.shadow(type="submit",value="Report",name="submit")= i18n.__("reports.shares.button")
+							if(resultsShares != null && resultsShares !="")
+								script(type="text/javascript" src="/javascripts/jspdf.js")
+								script(type="text/javascript" src="/javascripts/xlsx.core.min.js")
+								script(type="text/javascript" src="/javascripts/Blob.js")
+								script(type="text/javascript" src="/javascripts/FileSaver.js")
+								script(type="text/javascript" src="/javascripts/savexl.js")
+								script.
+									var var_resultsShares = "#{resultsShares}", var_dataShares = '!{dataShares}', var_reports_download_pdf = "#{i18n.__("reports.download.pdf")}", var_reports_download_excel= "#{i18n.__("reports.download.excel")}", var_fileShares = "#{file_shares}",var_message = "#{addMessageShares}"; 
+								script(type="text/javascript" src="/js/reports-utils-inv.js")
+								- resultsShares = ""
+
+				div(class="reportInsuffs results2 resultsshadow reports-container displaynone", id="reportInsuff")
+					h3
+						span(class="fa fa-file-text reports-text")
+						span= i18n.__("reports.insuff.title")
+					p=i18n.__("reports.insuff.subtitle")
+					- var message_fail_insuff = i18n.__("reports.insuff.message.fail")
+					- var message_fail_date_insuff = i18n.__("reports.insuff.message.date.fail")
+					- var message_success_insuff = i18n.__("reports.insuff.message.successinsuff")
+					if (addMessageInsuff == 'failure')
+						div(class="alert alert-danger-report alertshadow alert-insuff")!= message_fail_insuff
+					if (addMessageInsuff == 'wrongdate')
+						div(class="alert alert-danger-report alertshadow alert-insuff")!= message_fail_date_insuff
+					if (addMessageInsuff == 'success')
+						div(class="alert alert-success-report fade in alert-dismissable alertshadow alert-insuff")!= message_success_insuff
+					div
+						form(action="reportInsuff", method="post")
+							div(class="buttonss")
+								label(class="reports-dept")!= i18n.__("reports.insuff.lab.label") + dept + "</span>:"
+								span(class="fa fa-sort reports-sort")
+								select(name="reportLabInsuff" type="text" id="reportLabInsuff" class="form-control form-control0 reports-insuff-select" placeholder=i18n.__("reports.insuff.labselect"))
+									option(value="all")= i18n.__("reports.insuff.lab.option")
+									if(categories != undefined)
+										- var ob = categories
+										- for(var prop in ob)
+											- var lab = ob[prop].labname
+											option(value=lab) #{lab}
+								div(class="reportlabelwidth hideinapp")
+									label(class="reports-show")= i18n.__("reports.insuff.show")
+								div(class="reportlabelwidth reportlabelwidth3")
+									label(for="reportVendorInsuff",class="reports-vendor")= i18n.__("reports.insuff.vendor")
+									div(class="checkboxThree")
+										input(type="checkbox" name="reportVendorInsuff" id="reportVendorInsuff" value="vendor")
+										label(class="labelcheck shadow", for="reportVendorInsuff")
+								div(class="reportlabelwidth reportlabelwidth3 reports-insuff-label")
+									label(for="reportCatalogInsuff",class="reports-catalog")= i18n.__("reports.insuff.catalog")
+									div(class="checkboxThree")
+										input(type="checkbox" name="reportCatalogInsuff" id="reportCatalogInsuff" value="catalogNumber")
+										label(class="labelcheck shadow",for="reportCatalogInsuff")
+								div(class="reports-buttons-insuff")
+									button.btn.btn-success.btn-lg.btn-block.reportbutton2.reportbutton3.shadow(type="submit",value="Report",name="submit")= i18n.__("reports.insuff.button")
+							if(resultsInsuff != null && resultsInsuff !="")
+								- var file_insuff = i18n.__("reports.insuff.file") + "_" + labinsuff 
+								script(type="text/javascript" src="/javascripts/jspdf.js")
+								script(type="text/javascript" src="/javascripts/xlsx.core.min.js")
+								script(type="text/javascript" src="/javascripts/Blob.js")
+								script(type="text/javascript" src="/javascripts/FileSaver.js")
+								script(type="text/javascript" src="/javascripts/savexl.js")
+								script.
+									var var_resultsInsuff = "#{resultsInsuff}", var_reports_download_pdf = "#{i18n.__('reports.download.pdf')}", var_reports_download_excel = "#{i18n.__('reports.download.excel')}", var_dataInsuff = '!{dataInsuff}', var_fileinsuff = "#{file_insuff}",var_message = "#{addMessageInsuff}"; 
+								script(type="text/javascript" src="/js/reports-utils-insuff.js")
+								- resultsInsuff = ""
+		div(class="threepointssep desktabonly3 reports-3-sep")
+		div(class="intro2 intro3 animated fadeIn displaynone")
+		div(class="threepointssep desktabonly3 reports-3-sep-one")
+		div(class="slide-out-tip-div account-slide-container")
+			a(class="handle reports-handle" href="last-transactions",title='#{i18n.__("search.tip.header")}')!=Content
+			div(class="slide-container-one")
+				div(class="textalign-center")
+					span(class="zoom_controls")
+						a(href="#" class="zoom_out zoomicon" title=i18n.__("zoom.minus"))
+							span(class="fa fa-minus-circle")
+						a(href="#" class="zoom_reset zoomicon" title=i18n.__("zoom.reset"))
+							span(class="fa fa-circle-o-notch")
+						a(href="#" class="zoom_in zoomicon" title=i18n.__("zoom.plus"))
+							span(class="fa fa-plus-circle")
+					div(class="threepointssep margintopbelow-10")
+				p(class="font-12pt")!= i18n.__("reports.tip.header")
+				div(class="slide-desc")
+					span!= i18n.__("reports.tip.desc")
+		span(class="desktabonly", id="checkdisplay")
+
+		span(class="checkintro")
+		- if(resultsMoneyIntro != null && resultsMoneyIntro !="")
+			div(class="intro4 displaynone")!= resultsMoneyIntro.replace("labyoker-report-container-one", "labyoker-report-container-two")

@@ -1,0 +1,162 @@
+doctype html
+html(lang='en')
+   head
+     title= 'LabYoke Admin - ' + title
+     link(href='/css/animate.css', rel='stylesheet')
+     link(rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.css")
+     link(href='/css/popup.css', rel='stylesheet')
+     link(href='/css/bootstrap.css', rel='stylesheet')
+     link(href='/css/globaladmin.min.css', rel='stylesheet')
+     link(href='/css/fontello.css', rel='stylesheet')
+     link(href='/css/font-awesome.css', rel='stylesheet')
+     link(href='/css/animation.css', rel='stylesheet')
+     link(href='/css/hamburgers-master/dist/hamburgers.css', rel='stylesheet')
+     if (title=='About Us')
+       link(href='/css/rotating-card.css', rel='stylesheet')
+     if (title=='Users')
+       link(href='/css/normalize.css', rel='stylesheet')
+       link(href='/css/component.css', rel='stylesheet')
+       link(href='//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css', rel='stylesheet')
+     if (title=='Orders')
+      link(href='//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css', rel='stylesheet')
+     meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+     meta(http-equiv='X-UA-Compatible', content='IE=edge')
+     meta(name='viewport', content='width=device-width, initial-scale=1, user-scalable=0')
+     meta(name='robots', content='noindex, nofollow')
+     script(type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
+     script(type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.js")
+     :staticCache
+      link(rel="shortcut icon" href="/images/adminico.ico" type="image/x-icon")
+      link(rel="icon" href="/images/adminico.ico" type="image/x-icon")
+
+     if scripts
+       each script in scripts
+          script(type='text/javascript', src=script)
+   - var user = labyoker
+
+   - var sharesnumber = sharesnum
+   - var ordersnumber = ordersnum
+   - var ordersnumclass = "num"
+   - var sharesnumclass = "num"
+   - if(sharesnumber == null || sharesnumber == undefined)
+       - sharesnumber = 0
+   - if(ordersnumber == null || ordersnumber == undefined)
+       - ordersnumber = 0
+   - if(sharesnumber != null && sharesnumber <10)
+        - sharesnumclass = "num"
+   - else if(sharesnumber != null && sharesnumber <100)
+        - sharesnumclass = "num greatherthannine"
+   - else if(sharesnumber != null && sharesnumber <1000)
+        - sharesnumclass = "num greatherthanninetynine"
+
+   - if(ordersnumber != null && ordersnumber <10)
+        - ordersnumclass = "num"
+   - else if(ordersnumber != null && ordersnumber <100)
+        - ordersnumclass = "num greatherthannine"
+   - else if(ordersnumber != null && ordersnumber <1000)
+        - ordersnumclass = "num greatherthanninetynine"
+   - if(user != null && user != undefined && user.length>11)
+        - user = user.substring(0, 8)
+        - if(user.substring(8,8) == " ")
+           - user = user.substring(0,7)
+   body(class=loggedIn)
+     if (loggedIn==true)
+        .navbar.navbar-inverse.navbar-fixed-top.adjustnav.navbackground.admin-nav(role='navigation')
+            .container.nobottom.margintop-5
+                .navbar-header.paddingrightnav.admin-subnav
+                    button(class="hamburger hamburger--spring admin-button" data-toggle="collapse" data-target=".navbar-collapse" type="button")
+                      span(class="hamburger-box")
+                        span(class="hamburger-inner")
+
+                    - activateReports = "addMargin "
+                    - activateDepartments = "addMargin "
+                    - activateTool = "addMargin desktabonly5 "
+                    - activateHelp = "addMargin "
+                    - activateAbout = "addMargin "
+                    - activateUsers = "addMargin "
+                    - activateAccount = "account-border addMargin "
+                    - activateAdmin = "addMargin "
+                    - activeSearchMob = "addMargin "
+                    - if (title == 'Reports')
+                        - activateReports = activateDepartments + "labBackColor"
+                    - if (title == 'Departments')
+                        - activateDepartments = activateDepartments + "labBackColor"
+                    - if (title == 'Query Tool')
+                        - activateTool = activateTool + "labBackColor"
+                        - activeSearchMob = "labColorBackgroundHover pressedbutton"
+                    - if (title == 'Help')
+                        - activateHelp = activateHelp + "labBackColor"
+                    - if (title == 'Users')
+                        - activateUsers = activateUsers + "labBackColor"
+                    - if (title == 'Account')
+                        - activateAccount = activateAccount + "labBackColor"
+                    - if (title == 'About Us')
+                        - activateAbout = activateAbout + "labBackColor"
+
+                span
+                  label(for="togglerules" onclick="javascript:window.location.href='/search'" class="animated fadeInUp labelexpandrules labeladmin roundaccountmob shadow gotolabyokemobile" title="Labyoke")!= "L"
+                  label(for="togglerules" onclick="javascript:window.location.href='/search'" class="animated fadeInUp labelexpandrules labeladmin roundaccountmob shadow gotolabyoke" title="Labyoke")!= "L"
+                  a(href="/querytool", class="roundaccountmob searchmob admin-query " + activeSearchMob)
+                    span(class="fa fa-gear colmenu admin-menu " + activeSearchMob)
+                .collapse.navbar-collapse(id="navburger")
+                    div.adjustWidthSearch.float-left(class=isreghide)
+                        - adjustWidth = ""
+                        - menuaccount = "menumyaccountadmin"
+                        if(isLoggedInAdmin == false)
+                            - adjustWidth =  "width-111"
+                            - menuaccount = "menumyaccount"
+                        ul.nav.navbar-nav.addMargin.adjustWidthSearchUL(id="#menumyaccounta")
+                            li(class=activateTool)
+                                a(href="/admin/querytool", class="nav-menu " + adjustWidth ,id="menusearch")
+                                    span(class="fa fa-gear colmenu admin-gear")
+                                    span=" Tool"
+
+                            
+                    div(class="paddingMobile")
+                        ul.nav.navbar-nav(id="menumyshares", class="addMargin admin-dept")
+                            li(class=activateDepartments)
+                                a(href="/admin/departments",class="nav-menu",id="")
+                                    span(class="fa fa-building colmenu")
+                                    span=" Labs & Deps"
+                            li(class=activateUsers)
+                                a(href="/admin/users",class="nav-menu",id="")
+                                    span(class="fa fa-users colmenu")
+                                    span=" Users"
+                        ul.nav.navbar-nav(id=menuaccount, class="addMargin menu-border")
+                            li(class=activateHelp)
+                                a(href='/help', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-anchor colmenu")
+                                    span!=" Help "
+                            li(class=activateAbout)
+                                a(href='/about', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-home colmenu")
+                                    span!=" Us "
+                    ul.nav.navbar-nav.navbar-right
+                        li(class="nav-menu-logout cursor-pointer")
+                            a 
+                                span(class="marginleft-5")="Logout"
+     div.closemenu
+       block content
+       :staticCache
+        script(type="text/javascript" src="/javascripts/bootstrap.min.js")
+       script.
+        var lang = "en", var_processing = "#{i18n.__("datatable.processing")}", var_search = "#{i18n.__("datatable.search")}", var_lengthMenu = "#{i18n.__("datatable.lengthMenu")}", var_info = "#{i18n.__("datatable.info")}", var_infoEmpty = "#{i18n.__("datatable.infoEmpty")}", var_infoFiltered = "#{i18n.__("datatable.infoFiltered")}", var_loadingRecords = "#{i18n.__("datatable.loadingRecords")}", var_zeroRecords = "#{i18n.__("datatable.zeroRecords")}", var_emptyTable = "#{i18n.__("datatable.emptyTable")}", var_first = "#{i18n.__("datatable.first")}", var_previous = "#{i18n.__("datatable.previous")}", var_next = "#{i18n.__("datatable.next")}", var_last = "#{i18n.__("datatable.last")}", var_searchplaceholder = "#{i18n.__("datatable.searchplaceholder")}", var_sortAscending = "#{i18n.__("datatable.sortAscending")}", var_sortDescending = "#{i18n.__("datatable.sortDescending")}",var_bot_placeholder = "#{i18n.__("layout.bot.placeholder")}";
+       :staticCache
+        script(type="text/javascript" src="/javascripts/init.js")
+        script(type="text/javascript" src="/js/lang-utils.js")
+        script(type="text/javascript" src="/javascripts/adminpopup.js")
+       if (title=='Users')
+         script(type="text/javascript" src="/javascripts/custom-file-input.js")
+       if (title=='Reports' || title=='Account' || title=='Register')
+         script(type="text/javascript" src="/javascripts/jquery.maskedinput.min.js")
+
+       div(class="admin-bottom")
+              div(class="admin-labyoke")="@labyoke"
+       a(href="#0" class="cd-top" title="go to top")
+        span(class="fa fa-chevron-circle-up")
+    :staticCache
+    script(type="text/javascript" src="/js/admin-layout-utils.js")
+    script.
+      var var_currente = "#{currente}", var_currentl = "#{currentl}", var_body1 = "#{i18n.__("notification.body1")}", var_title = "#{i18n.__("notification.title")}", var_body2="#{i18n.__("notification.body2")}", var_labyoker="#{labyoker}";
+    script(type="text/javascript" src="/javascripts/notifications.js")
+

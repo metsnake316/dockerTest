@@ -1,0 +1,69 @@
+extends layout
+
+block content
+   - var margintopchoice = "margintop-5per"
+   - var helpheader = " helpheader"
+   - if (loggedIn==true)
+     - margintopchoice = "margintop-130"
+     - helpheader = ""
+   div(class="zoomnow container container2 moveFromLeft")
+     div(class=margintopchoice + " fronthelp" + helpheader)
+         a(href="/search")
+           img(src="/images/bouee6.png" alt="The Yoke" class="help-bouee-one")
+           img(src="/images/bouee6.png" alt="The Yoke" class="help-bouee-two")
+           img(src="/images/bouee6.png", alt="The Yoke", class="yokelogohelp")
+     div
+      div
+       h1!= i18n.__("help.title") + "."
+       div(class="pointsLayout alert results")
+          span= i18n.__("help.desc1")
+          span!= i18n.__("help.desc3")
+      span(class="threedown threepointssep marginbottom-25")
+      div(class="helpcontainer")
+        div(class="textalign-center")
+          span(class="fa fa-user-secret helpheaderleft")
+          span(class="fa fa-question helpheaderright")
+          span(class="fa fa-user-secret helpheaderleft2 width-100")
+        div
+         div.pointsLayout.alert.resultsshadow.helpleft
+          span(class="help-title")!= i18n.__("help.titledesc5")
+          span!= i18n.__("help.desc5")
+         span(class="fa fa-question helpheaderright2 width-100 textalign-center")
+         div.pointsLayout.alert.resultsshadow.helpright
+          span(class="help-title-one")!= i18n.__("help.titledesc7")
+          span!= i18n.__("help.desc7")
+        - if (loggedIn==true)
+          div(class="help-3-sep")
+            span(class="threepointssep marginbottom-40")
+            span(class="fa fa-eye helpcamera")
+
+          div(class="alert pointsLayout videobox")
+            p(class="font-20")
+              span!=i18n.__("help.titlevideo")
+
+            div(class="help-videos")
+              div(class="videocontainer")
+                span!= i18n.__("help.video.search")
+                video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/search_" + language + ".png", src="/videos/vid_search_en.mov")
+              div(class="videocontainer")
+                span!= i18n.__("help.video.shares")
+                video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/shares_" + language + ".png", src="/videos/vid_shares_en.mov")
+              div(class="videocontainer")
+                span!= i18n.__("help.video.orders")
+                video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/orders_" + language + ".png", src="/videos/vid_orders_en.mov")
+              div(class="videocontainer")
+                span!= i18n.__("help.video.profile")
+                video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/profile_" + language + ".png", src="/videos/vid_profile_en.mov")
+              - if(isLoggedInAdmin == true)
+                div(class="videocontainer")
+                  span!= i18n.__("help.video.admins")
+                  video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/admins_" + language + ".png", src="/videos/vid_admins_en.mov")
+                div(class="videocontainer")
+                  span!= i18n.__("help.video.reports")
+                  video(width="100%", height="100%", controls="", controlslist="nodownload", poster="/videos/reports_" + language + ".png", src="/videos/vid_reports_en.mov")          
+
+          div.alert.pointsLayout.help-user
+             span!= ''+labyoker + i18n.__("help.desc9")
+             a(href="mailto:labyoke@gmail.com",class="help-user-color")!= ' labyoke@gmail.com <br/>'
+   span(class="threepointssep topdown-10")                 
+                 

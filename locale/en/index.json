@@ -1,0 +1,33 @@
+{
+"bot.confused" : "You said: **%s**. Try asking for **help** or **order *reagent*** or **cancel *reagent* from *email***",
+"bot.cancel": "Absolutely, I'm canceling your order now.",
+
+"bot.order": "Absolutely! Let's put it together...",
+"bot.Order.title": "Order",
+"bot.Order.subtitle": "Please confirm this order:",
+"bot.order.reagent": "Reagent",
+"bot.order.email": "Email",
+"bot.order.vendor": "Vendor",
+"bot.order.catalognumber": "Catalog Number",
+"bot.order.button": "Yes",
+"bot.order.invalidsearch": "You entered an invalid reagent keyword. Please try again and enter: **Order *reagent***.",
+"bot.order.noresults": "There are no available reagents for your order attempt of **%s**.",
+
+"bot.ciao": "Goodbye.",
+"bot.hi": "Oh Hello to you!",
+"bot.thanks": "You are most welcome. I am always here when you need me.",
+"bot.help": "You seem to be asking for help on something. Try our [help](https://team-labyoke.herokuapp.com/help) section for a wealth of information and video tutorials or be. Anything else I can help you with?",
+
+"bot.ordersuccessful": "Your order has been successfully placed. A confirmation email has been sent to you.",
+"bot.ordernotsuccessful": "There was an issue while I tried to place your order. Please try again.",
+
+"bot.Cancel.title": "Cancel Order",
+"bot.Cancel.subtitle": "Please confirm this cancellation:",
+"bot.cancel.invalidsearch": "You entered invalid cancel keywords. Please try again and enter: **Cancel *reagent* from *email***.",
+"bot.cancel.noresults": "Sorry I could not find any reagent to cancel for: **%s**.",
+"bot.cancelsuccessful": "Your order has been successfully cancelled. A confirmation email has been sent to the requestor.",
+"bot.cancelnotsuccessful": "There was an issue while I tried to cancel the order. Please try again.",
+
+"bot.greet": "Hello there! My name's Professor L! What can I help you with? Try asking for **help** or **order *reagent*** or **cancel order *reagent* from *email***."
+
+}

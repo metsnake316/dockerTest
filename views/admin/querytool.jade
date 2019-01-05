@@ -1,0 +1,110 @@
+extends layout
+
+block content
+    div(class="container login2 marginbottom margintop container2 /*moveFromLeft*/")
+        div
+            h1
+              span(class="fa fa-gear lightyokecolor")
+              span!= ' Query '
+              span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+            p(class="marginbottom-40")!="Start querying the database."
+            - var remove = 0
+            - searchText = "Looking for reagent..."
+            - searchTextCatalog = "Looking for catalog number..."
+            - classButton = "btn-success"
+            - classButtonCatalog = "btn-success"
+            if searchformText
+                - searchText = "" + searchformText
+                - classButton = "btn-success btn-success-results"
+            if searchformTextCatalog
+                - searchTextCatalog = "Search: " + searchformTextCatalog
+                - searchformTextCatalog = "Search: " + searchformTextCatalog
+                - classButtonCatalog = "btn-success-results"            
+            div(id="ctl00_Div2" class="row")
+                div
+                    if message
+                        div(class="alert alert-danger")!= message
+                    form(action="/admin/querytool" method="post")
+                        textarea(name="queryText" list="agent-datalist" class="form-control shadow admin-query-text" id="queryText" placeholder="Select * from ..." cols="30" rows="7" autofocus)
+                        div(class="buttons")
+                            button(class="btn " + classButton + " btn-lg btn-block btn50 shadow" type='submit') Submit
+                            
+        
+        - if((searchResults != null && searchResults.length > 0) || (rowCount != null && rowCount != undefined))
+            -var count = 0
+            div
+              div(id="queryresults")
+                  div(class="admin-query-results")
+                  div(class="admin-query-results-one")
+                  div(class="admin-query-results-two")
+                  div(class="admin-query-results-three")
+                    span(class="textalign-center")
+                      - if(error != "error")
+                        - count = rowCount
+                      h3="Your query: "
+                        if searchformText
+                            span(class="admin-query-color")=" " + searchText
+                            span(class="admin-query-color-one")=" (" + count + ")"
+              - style = ""
+              - if(error != "error" && type == "select")
+                  - style = "admin-query-overflow"
+            - if(error != "error" && type == "select" && searchResults != null && searchResults.length > 0)
+                div(class="results resultsshadow")
+                    div(id="ctl00_Div2" class="row rank")
+                        - var keys
+                        div(class="table-responsive")                
+                            table(id="rankTblload" class="table rankTbl")
+                                thead
+                                    tr(class="you info-best font-bold")
+                                        - keys = Object.keys(searchResults[0])
+                                        - for(var prop in keys)
+                                            td(class="wrapped") #{keys[prop]}
+                                tbody
+                                  - var values = Object.keys(searchResults).map(function(key) {return searchResults[key];})
+                                  - keys = Object.keys(searchResults[0])
+                                  -for(var prop in searchResults)
+                                    tr(class="wrapped")
+                                        - var values = Object.keys(searchResults[prop]).map(function(key) {var t = searchResults[prop];return t[key];})
+                                        -for(var val in values)
+                                            - var valobj = values[val]
+                                            - if(Object.prototype.toString.call(valobj) === '[object Date]')
+                                                - var d = new Date(valobj)
+                                                - valobj = d.toLocaleDateString("en-US")
+                                            td #{valobj}
+
+            div(id="raw")
+                h5(class="admin-query-raw", id="labyokerslink")="Raw data "
+                  span(class="fa fa-database labyokerslinkdb admin-query-db")
+                div(class="queryseparator displaynone")
+                  div(class="admin-query-raw-one")
+                  div(class="admin-query-raw-two")
+                  div(class="admin-query-raw-three")
+                #labyokers.results.resultsshadow.queryraw.admin-query-raw-four(class=style)
+                    div(id="ctl00_Div2" class="row rank").match
+                       - i = 
+                       - var j = 1
+                       - className = ""
+                       div(class="table-responsive admin-query-table")
+                         - if(error != "error" && type == "select")
+                           - for(var prop in searchResults)
+                                p!="<span class='labColor'><b>" + j + ". </b></span>" + JSON.stringify(searchResults[prop])
+                                - j = j + 1
+                                - remove = 1
+                         - if(error == "error")
+                             p(class="textalign-center")="Your query cannot be processed - "
+                                span!=JSON.stringify(errorStr).replace(/&quot;/g, '"')
+                             - remove = 1
+                         - if(error != "error" && type != "select" && rowCount != "error" && remove == 0)
+                             p(class="textalign-center")!="" + type + " - " + rowCount + " row(s) affected."
+                             - remove = 1
+                         - if(count == 0)
+                             p(class="textalign-center")!="There are no results available for your query."
+                             - remove = 1                        
+             
+            script.
+              var var_searchtext = "#{searchText}", var_remove = #{remove};
+            script(type="text/javascript" src="/js/admin-querytool-utils.js")
+
+
+        
+

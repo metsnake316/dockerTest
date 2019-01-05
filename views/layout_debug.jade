@@ -1,0 +1,455 @@
+doctype html
+html(lang='en')
+   head
+     - var a = "layout." + title
+     - var language = "en"
+     - if(lang != null && lang != undefined)
+        - language = lang
+     - var testing = ""
+     - var isreghide = "isreghide"
+     - var isregpadding = "isregpadding"
+     - var menushare = "menushare"
+     - var menumyshares = "menumyshares2"
+     - var isadminroundaccountLeft = " isadminroundaccountLeft "
+     - var isregroundaccountLeft = " isregroundaccountLeft "
+     - var roundaccountLeft = isregroundaccountLeft
+     - if(isLoggedInAdmin == true)
+        - testing = "test"
+        - roundaccountLeft = isadminroundaccountLeft
+        - isreghide = ""
+        - isregpadding = ""
+        - menushare = ""
+        - menumyshares = ""
+     title!= 'LabYoke - ' + i18n.__(a)
+     link(href='/css/botchat.css', rel='stylesheet')
+     link(href='/css/animate.css', rel='stylesheet')
+     if (title=='Orders' || title == "Share" || title=="Search" || title=="Help" || title=="Admins" || title=='Reagent Search')
+      link(rel="stylesheet" type="text/css" href="/css/datatables.min.css")
+     if(title=='Reagent Search' || title=='Search' || title=='Share' || title=='Orders' || title=='Admins')
+      link(href='/css/popup.css', rel='stylesheet')
+     link(href='/css/bootstrap.css', rel='stylesheet')
+     link(href='/css/bl.css', rel='stylesheet')
+     link(href='/css/fontello.css', rel='stylesheet')
+     link(href='/css/font-awesome.css', rel='stylesheet')
+     link(href='/css/animation.css', rel='stylesheet')
+     link(href='/css/hamburgers-master/dist/hamburgers.css', rel='stylesheet')
+
+     if (title=='About Us')
+       link(href='/css/rotating-card.css', rel='stylesheet')
+     //if (title=='Login')
+     //  link(href='/javascripts/assets/animate.css', rel='stylesheet')
+     if (title=='Share' || title=='Admins')
+       link(href='/css/normalize.css', rel='stylesheet')
+       link(href='/css/component.css', rel='stylesheet')
+       link(href='//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css', rel='stylesheet')
+     if (title=='Orders')
+      link(href='//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css', rel='stylesheet')
+      //link(href="//fonts.googleapis.com/css?family=Reenie+Beanie:regular", rel="stylesheet", type="text/css")
+     //if (title=='Reports')
+     //  link(href='/css/reportbuttons.css', rel='stylesheet')
+     meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+     meta(http-equiv='X-UA-Compatible', content='IE=edge')
+     meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no")
+     meta(name='robots', content='noindex, nofollow')
+     script(type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
+     if (title=='Orders' || title == "Share" || title=="Search" || title=="Help" || title=="Admins" || title=='Reagent Search')
+      script(type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.js")
+     //if(title=='Search' || title == 'Reagent Search')
+       //script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/plugins/jquery.tablednd.js")
+     //if(title == 'Pop')
+     //  script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js")
+     if (title=='Share')
+       script(type="text/javascript" src="/javascripts/canvas2svg.js")
+       script(type="text/javascript" src="/javascripts/jvenn.min.js")
+       script(type="text/javascript" src="/javascripts/jquery.twbsPagination.min.js")
+     if (title!='Help' || title!='About')
+       script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Reagent Search')
+      // script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Search')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Reports')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Share')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Orders')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Account')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Admins')
+       //script(type="text/javascript" src="/javascripts/jquery.slideout.js")
+     //if (title=='Orders' || title == "Share" || title=="Reports")
+     //  script(type="text/javascript" src="/javascripts/fastclick.js")
+     link(rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon")
+     link(rel="icon" href="/images/favicon.ico" type="image/x-icon")
+
+     if scripts
+       each script in scripts
+          script(type='text/javascript', src=script)
+   - var user = labyoker
+   - var surname = labyokersurname
+   - var user_surname = user
+   - if(user_surname != null && user_surname != undefined && user_surname.length>1)
+      - user_surname = user_surname.substring(0, 1)
+   - else
+      - user_surname = "."
+   - if(surname != null && surname != undefined && surname.length>1)
+      - surname = surname.substring(0, 1)
+   - else
+      - surname = "..."
+
+   - var sharesnumber = sharesnum
+   - var ordersnumber = ordersnum
+   - var ordersnumclass = "num"
+   - var sharesnumclass = "num"
+   - if(sharesnumber == null || sharesnumber == undefined)
+       - sharesnumber = 0
+   - if(ordersnumber == null || ordersnumber == undefined)
+       - ordersnumber = 0
+   - if(sharesnumber != null && sharesnumber <10)
+        - sharesnumclass = "num"
+   - else if(sharesnumber != null && sharesnumber <100)
+        - sharesnumclass = "num greatherthannine"
+   - else if(sharesnumber != null && sharesnumber <1000)
+        - sharesnumclass = "num greatherthanninetynine"
+
+   - if(ordersnumber != null && ordersnumber <10)
+        - ordersnumclass = "num"
+   - else if(ordersnumber != null && ordersnumber <100)
+        - ordersnumclass = "num greatherthannine"
+   - else if(ordersnumber != null && ordersnumber <1000)
+        - ordersnumclass = "num greatherthanninetynine"
+   - if(user != null && user != undefined && user.length>11)
+        - user = user.substring(0, 8)
+        - if(user.substring(8,8) == " ")
+           - user = user.substring(0,7)
+   - 
+   body(class=loggedIn, ontouchstart="")
+     //if (title=='Orders' || title == "Share" || title=="Reports") 
+     //   script.
+     //     $(document).ready(function() {
+     //       FastClick.attach(document.body);
+     //     });
+
+     if (loggedIn==true)
+        .navbar.navbar-inverse.navbar-fixed-top.adjustnav.navbackground(role='navigation',style="background-color: white;font-size: 10pt;position:fixed !important;padding-top:10px")
+            .container.nobottom(style="margin-top: 5px;")
+                .navbar-header.paddingrightnav(style="margin-bottom: 16px;float:right; margin-left:auto;margin-right: -10px;")
+                    //button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse', style="border-color:#8a6d3b")
+                      //  span.icon-bar
+                      //  span.icon-bar
+                      //  span.icon-bar
+                    button(class="hamburger hamburger--spring" data-toggle="collapse" data-target=".navbar-collapse" type="button" style="outline:none")
+                      span(class="hamburger-box")
+                        span(class="hamburger-inner")
+
+                    - activateReports = "addMargin "
+                    - activateShares = "addMargin "
+                    - activateSearch = "addMargin desktabonly5 "
+                    - activateHelp = "addMargin "
+                    - activateAbout = "addMargin "
+                    - activateOrders = "addMargin "
+                    - activateAccount = "account-borders addMargin movetoleft " + isreghide
+                    - activateAdmin = "addMargin "
+                    - activeSearchMob = ""
+                    - activeAccountMob = ""
+                    - if (title == 'Reports')
+                        - activateReports = activateShares + "labColorBackgroundHover"
+                    - if (title == 'Share')
+                        - activateShares = activateShares + "labColorBackgroundHover"
+                    - if (title == 'Reagent Search')
+                        - activateSearch = activateSearch + "labColorBackgroundHover"
+                        - activeSearchMob = "labColorBackgroundHover"
+                    - if (title == 'Search')
+                        - activateSearch = activateSearch + "labColorBackgroundHover"
+                        - activeSearchMob = "labColorBackgroundHover"
+                    - if (title == 'Help')
+                        - activateHelp = activateHelp + "labColorBackgroundHover"
+                    - if (title == 'Orders')
+                        - activateOrders = activateOrders + "labColorBackgroundHover"
+                    - if (title == 'Account')
+                        - activateAccount = activateAccount //+ "labColorBackgroundHover"
+                        - activeAccountMob = "labColorBackgroundHover"
+                    - if (title == 'About Us')
+                        - activateAbout = activateAbout + "labColorBackgroundHover"
+                    - if (title == 'Admins')
+                        - activateAdmin = activateAdmin + "labColorBackgroundHover"
+                span
+                  a(href="/account", class="roundaccountmob " + activeAccountMob, style="font-size: 17px;color: white;text-decoration: none;")!= user_surname + "" + surname
+                span
+                  a(href="/search", class="roundaccountmob searchmob " + activeSearchMob, style="color: white;text-decoration: none;")
+                    span(class="fa fa-search colmenu " + activeSearchMob, style="color: white;font-size: 11pt;")
+                .collapse.navbar-collapse(id="navburger")
+                    div.adjustWidthSearch(style="float:left", class=isreghide)
+                        - adjustWidth = ""
+                        - menuaccount = "menumyaccountadmin"
+                        if(isLoggedInAdmin == false)
+                            - adjustWidth =  "width: 111px;"
+                            - menuaccount = "menumyaccount"
+                        ul.nav.navbar-nav.addMargin.adjustWidthSearchUL(id="#menumyaccounta")
+                            li(class=activateSearch)
+                                a(href="/search", class="nav-menu",id="menusearch", style=adjustWidth)
+                                    span(class="fa fa-search colmenu", style="font-size: 14pt;margin-top: -5px")
+                                    span 
+                            if(isLoggedInAdmin == true)
+                                li(class=activateReports)
+                                        a(href="/reports",class="nav-menu", id="menusearch", style="")
+                                            span(class="fa fa-file-text colmenu")
+                                            span #{i18n.__("layout.Reports")}
+                                li(class=activateAdmin)
+                                        //a(href="/share/do#upload",class="nav-menu", id="menusearch", style="")
+                                        a(href="/admins",class="nav-menu", id="menusearch", style="")
+                                            span(class="fa fa-user-plus colmenu")
+                                            span #{i18n.__("layout.Admin")}
+                            
+                    div(class="paddingMobile " + isregpadding)
+                        ul.nav.navbar-nav(id="menumyshares", class="addMargin menumyshares " + menumyshares, style="border-left-color: white;border-left-style: solid;border-width: thick;")
+                            li(class=activateShares)
+                                a(href="/share",class="nav-menu",id=menusharess)
+                                    span(class="fa fa-exchange colmenu")
+                                    span #{i18n.__("layout.Share")}
+                                   - if(sharesnumber>0) 
+                                    span(class="fa fa-comment bubble1")
+                                    span(class=sharesnumclass, id="bubblenum1")!=sharesnumber
+                            li(class=activateOrders)
+                                a(href="/orders",class="nav-menu",id=menusharess)
+                                    span(class="fa fa-ship colmenu")
+                                    span #{i18n.__("layout.Orders")}
+                                  - if(ordersnumber>0) 
+                                    span(class="fa fa-comment")
+                                    span(class=ordersnumclass)!=ordersnumber
+                        ul.nav.navbar-nav(id=menuaccount, class="addMargin menu-border padnum")
+                            li(class=activateAccount, style="width: 122px;padding-top:50px;padding-right:40px;background-color:rgb(173, 153, 117)", id=testing)
+                                //a(href="/account",class="nav-menus myaccount navplaceholder", id="menumyaccounta")
+                                    //span #{i18n.__("layout.Profile")}
+                            li(class=activateHelp)
+                                a(href='/help', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-anchor colmenu")
+                                    span #{i18n.__("layout.Help")}
+                            li(class=activateAbout)
+                                a(href='/about', class="nav-menu",id="menumyaccounta")
+                                    span(class="fa fa-home colmenu")
+                                    span #{i18n.__("layout.Us")}
+                    span
+                      a(href="/account", class="roundaccount " + roundaccountLeft + activeAccountMob)!=user_surname + "" + surname
+                    ul.nav.navbar-nav.navbar-right
+                        li(class="nav-menu-logout", style="cursor:pointer")
+                            a 
+                                span(class="desktabonly4",style="margin-left: 5px;") #{i18n.__("layout.Logout")}
+                                span(class="mobileonly2",style="margin-left: 5px;") #{i18n.__("layout.Logout2")}
+
+     block content
+     div(class="labbot sleep" style="overflow: hidden;position: absolute;right: 100%;left: 43.5%;top: 100%;bottom: 0px;margin: 50px;margin-top: 110px;width: 70px;height: 70px;")
+      img(src="/images/tip5.png" style="width: 70px;")
+     div(class="labbot awake" style="overflow: hidden;position: absolute;right: 100%;left: 54%;top: 100%;bottom: 0px;margin: 50px;margin-top: 110px;width: 70px;height: 70px;display:none")
+      img(src="/images/tip6.png" style="width: 70px;")
+     div(id="bot", style="display:none")
+     script(type="text/javascript" src="/javascripts/botchat.js")
+     script(type="text/javascript" src="/javascripts/bootstrap.min.js")
+     script(type="text/javascript" src="/javascripts/popup.js")
+     if(title=='Login')
+        script(type="text/javascript" src="/javascripts/image_preload.js")
+     if (title=='Share' || title=='Admins')
+       script(type="text/javascript" src="/javascripts/custom-file-input.js")
+     if(title=='Reports')
+       script(type="text/javascript" src="/javascripts/html2canvas.js")
+     if (title=='Reports' || title=='Account' || title=='Register')
+       script(type="text/javascript" src="/javascripts/jquery.maskedinput.min.js")
+       script(type="text/javascript" src="/javascripts/jsPDF-master/dist/jspdf.min.js")
+       script(type="text/javascript" src="/javascripts/jsPDF-master/libs/html2pdf.js")
+     if (title=='Reports' || title=='Account' || title=='Register' || title=='About Us' || title=='Change Password' || title=='Forgot Password' || title=='Register' || title=='Help' || title=='Orders' || (title=='Share' && !doing) || title=='Search' || title == 'Reagent Search' || title == 'Admins')
+       script(type="text/javascript" src="/javascripts/spinner.js")
+     //- if (title!='Forgot Password' && title!='Register' && title!='About Us' && title!='Help' && title!='Login' && title!='Change Password' && title != 'Home' && title != 'Pop' && title != 'Reagent Search' && title !='Search' && title !='Reports')
+       //div(style="position: relative;width: 100%;text-align: center;z-index: -1;")
+       //     img(src="/images/yoke4.png", alt="The Yoke", title="Yoke", class="yokelogofooter")
+
+       script.
+          var h = $(window).height() - 125;
+          $(".marginbottom").css("min-height",h);
+     div(style="margin-top: 40px; background-color: #8a6d3b; position: fixed;bottom: 0;width: 100%;")
+            div(style="color:white; text-align:center; font-size:11px;")="@labyoke"
+              img(src="/images/"+language+"0.png" alt="Language" title="Language" style="width: 15px;margin-left: 9px;")
+     a(href="#0" class="cd-top" title="go to top")
+      span(class="fa fa-chevron-circle-up")
+    script.
+        BotChat.App({
+        directLine: { secret: "jMO0wtNhTWM.cwA.rqg._IWRYZZ7OsyoD0F6JfuPEDOnw6SP48-pAnIRptYH3mE" },
+        user: { id: 'userid' },
+        bot: { id: 'Labyoke' },
+        resize: 'detect'
+      }, document.getElementById("bot"));
+
+        $(".nav-menu-logout").click(function() {
+                    $( this ).addClass( "animated hinge" );
+                    setTimeout(function() {
+                      window.location.href = "/logout";
+                    }, 2000);
+                    });
+        $(".labbot").click(function() {
+                    $( "#bot" ).show();
+                    $( "#awake" ).show();
+                    $( "#sleep" ).hide();
+                    });
+
+        // Look for .hamburger
+        var hamburger = document.querySelector(".hamburger");
+        // On click
+        if(hamburger != undefined && hamburger != null){
+        hamburger.addEventListener("click", function() {
+          // Toggle class "is-active"
+          hamburger.classList.toggle("is-active");
+          // Do something else, like open/close menu
+          console.log("clicked hamburger.");
+
+              if($("#bubblenum1") != null && $("#bubblenum1").size() > 0){
+              var bubblenum1left = $("#bubblenum1").offset().left;
+              var bubblenum1top = $("#bubblenum1").offset().top;
+
+              bubblenum1left = parseInt(bubblenum1left) - 10;
+
+              if(bubblenum1left > 0){
+              //$(".bubble1").css("left", bubblenum1left);
+              bubblenum1top = parseInt(bubblenum1top) - 3;
+              //$(".bubble1").css("top", bubblenum1top);
+              //$(".bubble1").css("position", "fixed");
+              }
+              }
+
+        });
+        }
+        
+        var logout = document.querySelector(".nav-menu-logout");
+        // On click
+        if(logout != undefined && logout != null){
+        logout.addEventListener("click", function() {
+              $(".menu-border").css("border-left-color", "transparent");
+              $("#menumyshares").css("border-left-color", "transparent");
+            });
+        }        
+        //Set sizes for roundaccout
+          $( document ).ready(function() {
+
+              if($("#bubblenum1") != null && $("#bubblenum1").size() > 0){
+              var bubblenum1left = $("#bubblenum1").offset().left;
+              var bubblenum1top = $("#bubblenum1").offset().top;
+
+              bubblenum1left = parseInt(bubblenum1left) - 10;
+
+              if(bubblenum1left > 0){
+              //$(".bubble1").css("left", bubblenum1left);
+              bubblenum1top = parseInt(bubblenum1top) - 3;
+              //$(".bubble1").css("top", bubblenum1top);
+              //$(".bubble1").css("position", "fixed");
+              }
+              }
+
+              var w = $(".roundaccount").width();
+              var pad = $(".roundaccount").css("padding-right");
+              if(pad != undefined){
+              var par = pad.substring(0,2);
+              console.log("roundaccount padding: " + par);
+
+              var p = parseInt(par) + parseInt(par) + parseInt(w) + 6;
+              $(".navplaceholder").css("width", p);
+              var l =  156 + p + 5;
+              var win = parseInt($( window ).width());
+              console.log("window width: " + win);
+              console.log("previous l: " + l);
+              if(win < 850){
+                l = 139 + p + 5.5;
+                console.log("changing left: " + l);
+              }
+              //$(".roundaccount").css("left",l * -1);
+              //console.log("roundaccount left: " + l);
+              //var a = $('#menumyaccountadmin').offset().left;
+              var b = $('.roundaccount').offset().left;
+              //var d = $('#menumyaccountadmin').width();
+              //console.log("a: " + a);
+              console.log("b: " + b);
+              //console.log("d: " + d);
+              //var c = parseInt(a) - parseInt(b) - parseInt(d) + 5.5;
+              //var c = parseInt(d) * -1;
+              //$(".roundaccount").css("left", c);
+              $(".movetoleft").css("width", p);
+              //console.log("roundaccount left: " + c);
+              
+              }
+              console.log("navpl width: " + w);
+              console.log("============================");
+
+
+            // browser window scroll (in pixels) after which the "back to top" link is shown
+            var offset = 300,
+              //browser window scroll (in pixels) after which the "back to top" link opacity is reduced
+              offset_opacity = 1200,
+              //duration of the top scrolling animation (in ms)
+              scroll_top_duration = 700,
+              //grab the "back to top" link
+              $back_to_top = $('.cd-top');
+
+            //hide or show the "back to top" link
+            $(window).scroll(function(){
+              ( $(this).scrollTop() > offset ) ? $back_to_top.addClass('cd-is-visible') : $back_to_top.removeClass('cd-is-visible cd-fade-out');
+              if( $(this).scrollTop() > offset_opacity ) { 
+                $back_to_top.addClass('cd-fade-out');
+              }
+            });
+
+            //smooth scroll to top
+            $back_to_top.on('click', function(event){
+              event.preventDefault();
+              $('body,html').animate({
+                scrollTop: 0 ,
+                }, scroll_top_duration
+              );
+            });
+
+          });
+          $( window ).resize(function() {
+            if($("#bubblenum1") != null && $("#bubblenum1").size() > 0){
+            
+              var bubblenum1left = $("#bubblenum1").offset().left;
+              var bubblenum1top = $("#bubblenum1").offset().top;
+              bubblenum1left = parseInt(bubblenum1left) - 10;
+              if(bubblenum1left > 0){
+              //$(".bubble1").css("left", bubblenum1left);
+              bubblenum1top = parseInt(bubblenum1top) - 3;
+              //$(".bubble1").css("top", bubblenum1top);
+              //$(".bubble1").css("position", "fixed");
+              }
+              }
+
+              var w = $(".roundaccount").width();
+              var pad = $(".roundaccount").css("padding-right");
+              if(pad != undefined){
+              var par = pad.substring(0,2);
+              console.log("roundaccount padding: " + par);
+
+              var p = parseInt(par) + parseInt(par) + parseInt(w) + 6;
+              $(".navplaceholder").css("width", p);
+              var l =  156 + p + 5;
+              var win = parseInt($( window ).width());
+              console.log("window width: " + win);
+              console.log("previous l: " + l);
+              if(win < 850){
+                l = 139 + p + 5.5;
+                console.log("changing left: " + l);
+              }
+              //var a = $('#menumyaccountadmin').offset().left;
+              var b = $('.roundaccount').offset().left;
+              //var d = $('#menumyaccountadmin').width();
+              //console.log("a: " + a);
+              console.log("b: " + b);
+              //console.log("d: " + d);
+              //var c = parseInt(a) - parseInt(b) + 5.5;
+              //var c = parseInt(d) * -1;
+              //$(".roundaccount").css("left", c);
+              $(".movetoleft").css("width", p);
+              //console.log("roundaccount left: " + c);
+              
+              }
+              console.log("navpl width: " + w);
+              console.log("============================");
+          });
+          
+

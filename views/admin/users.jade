@@ -1,0 +1,126 @@
+extends layout
+
+block content
+  div(id="ios-light")
+    center
+      p(id="disableText")
+      div
+        div(id="actionorder" class="exit admin-users-top")="OK"
+        div(class="exit" id="actioncancel")="Cancel"
+  div(class="shade" id="shade")
+  div(class="shade-light" id="shade-light")
+  div(class="container login2 marginbottom margintop container2 /*moveFromLeft*/")
+    div
+      h1
+        span(class="fa fa-users lightyokecolor")
+        span!= ' Users '
+        span(class="fa fa-caret-right lightyokecolor animated fadeIn font-20")
+      div(class="marginbottom-40")!="See below a list of all users in the system. In addition to visually <span class='font-bold'>browsing</span> and <span class='font-bold'>searching</span> through the list, you can now <span class='font-bold'>disable</span>, <span class='font-bold'>upgrade</span>, or <span class='font-bold'>transfer</span> users from one lab to another per request. The user will receive a notification email."
+        div(class="marginleft-10")
+          span(class="fa fa-user admin-users-user")
+          span!= " Regular user  "
+          span(class="fa fa-user admin-users-user-one")
+          span!= " Administrator  "
+          span(class="fa fa-user-secret admin-users-user-two")
+          span!= " Super admin"
+      if users
+        if erroruser == "error1"
+            div(class="alert alert-danger fade in alert-dismissable")!= "This user has already been assigned to a lab. Please first select a new admin for the lab and try again."
+        if erroruser == "error2"
+            div(class="alert alert-danger fade in alert-dismissable")!= "There was an issue with updating the user. Please try again."
+        if transfermess == "fail"
+            div(class="alert alert-danger fade in alert-dismissable")!= "There was an issue transferring the user to a different lab"
+        if transfermess == "success"
+            div(class="alert alert-success fade in alert-dismissable")!= "You have successfully transferred the user <b>" + transferuser + "</b> to another lab."
+        if transfermess == "nochange"
+            div(class="alert alert-warning fade in alert-dismissable")!= "No change has been applied for the user <b>" + transferuser + "</b>. You have selected the same lab."
+        div(id="results", class="shadow resultsshadow admin-users-results")
+          - var isadmininput = 0
+          - var disableinput = 0
+          div(id="ctl00_Div2" class="row rank")
+            div(class="table-responsive")                
+              table(id="rankTblload" class="table rankTbl card-list-table")
+                thead
+                  tr(class="you info-best font-bold")
+                    td= 'id '
+                    td(class="wrapped desktabonly")!= 'Name'
+                    td(class="desktabonly")= 'Surname'
+                    td= 'Lab'
+                    td(class="desktabonly")= 'Email'
+                    td= 'Admin'
+                    td= 'Disable'
+                tbody
+                  -var ob = users
+                  -for(var prop in ob)
+                    - var checkedstr = false
+                    - var checkedstradmin = false
+                    - var isdisabled = ""
+                    - var isadminclass = ""
+                    - var disabled = parseInt(ob[prop].disable)
+                    - if(disabled == 0)
+                      - checkedstr = true
+                    - var isadmin = parseInt(ob[prop].admin)
+                    - if(isadmin == 1)
+                      - isadminclass = "tdadmin"
+                      - checkedstradmin = true
+                    - if(isadmin == 2)
+                      - isadminclass = "tdsuperadmin"
+                    tr(class= isadminclass + " truser animated fadeIn " + isdisabled)
+                      td(class="tduser") #{ob[prop].id}
+                      td(class="wrapped desktabonly tduser" data-title="Name") #{ob[prop].name}
+                      td(class="desktabonly tduser" data-title="Surname") #{ob[prop].surname}
+                      td(class="wrapped tduser selectlab"+prop data-title="Lab" data-search="")
+                        - if("initial_lab" == ob[prop].lab)
+                            span!= ob[prop].lab
+                        - else
+                          form(action="/admin/transferusertolab" method="post" id="transform")
+                            select(name="labnameedit" type="text" id="labnameedit" class="form-control labnameedit admin-users-border" placeholder="Lab")
+                              option(value"selectlabnameedit")="Select a Lab"
+                              - if(labs != undefined)
+                                - for(var pr in labs)
+                                  - var lab = labs[pr].labname
+                                  - var checkedstrLab = false;
+                                  - if(lab == ob[prop].lab)
+                                    - checkedstrLab = true
+                                    script.
+                                      var prop = "#{prop}";var lab = "#{lab}"; $(".selectlab"+prop).attr("data-search", lab)
+                                            
+                                  option(value=lab selected=(checkedstrLab===true ? "selected" : undefined)) #{lab}
+
+                            input(type="hidden" name="id" value=ob[prop].id)
+                            input(type="hidden" name="name" value=ob[prop].name)
+                            input(type="hidden" name="surname" value=ob[prop].surname)
+                            input(type="hidden" name="oldlab" value=ob[prop].lab)
+                            input(type="hidden" name="email" value=ob[prop].email)
+                            div(class="admin-users-arrow")
+                              div(class="arrow-up marginbottom-5")
+                              div(class="arrow-down")
+                      td(class="desktabonly tduser" data-title="Email") #{ob[prop].email}
+                      - if(isadmin != 2)
+                        td(class="tduser" data-title="Admin")
+                          form(action="/admin/isadmin" method="post")
+                            div(class="checkboxThree1")
+                              input(type="checkbox" id="isadmin"+isadmininput name="isadmin" value="isadmin" class="isadmin admin-users-input" checked=(checkedstradmin===true ? "checked" : undefined))
+                              label(for="isadmin"+isadmininput class="labelcheck1 shadow")
+                            input(type="hidden" name="id" value=ob[prop].id)
+                            input(type="hidden" name="name" value=ob[prop].name)
+                            input(type="hidden" name="surname" value=ob[prop].surname)
+                            input(type="hidden" name="email" value=ob[prop].email)
+                            input(type="hidden" name="admin" value=ob[prop].admin)
+                      - else
+                        td(class="tduser" data-title="Super Admin")
+                          span!= "&nbsp;"
+                      td(data-title="Disable" class="tduser")
+                        form(action="/admin/disable" method="post")
+                          div(class="checkboxThree1")
+                            input(id="cancel"+disableinput type="checkbox" name="cancel" value="cancel" class="cancel admin-users-input" checked=(checkedstr===true ? "checked" : undefined))
+                            label(for="cancel"+disableinput class="labelcheck1 shadow")
+                          input(type="hidden" name="id" value=ob[prop].id)
+                          input(type="hidden" name="name" value=ob[prop].name)
+                          input(type="hidden" name="surname" value=ob[prop].surname)
+                          input(type="hidden" name="email" value=ob[prop].email)
+                      - isadmininput = isadmininput + 1
+                      - disableinput = disableinput + 1
+              script(type="text/javascript" src="/js/admin-users-utils.js")
+      if !users
+        div(class="alert alert-danger")!= "No Users have registered"

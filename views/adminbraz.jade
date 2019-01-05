@@ -1,0 +1,138 @@
+extends layout
+
+block content
+                           
+  div(style="padding-left: 20px")
+
+     h1= title
+     p Enter results daily and run the script!
+     
+     div
+        a(href="#" onclick="javascript:$('.winners').removeClass('hide')")!='Administer Teams Advancing ('
+        a(href="#" style="font-weight:bold" onclick="javascript:$('.winners').addClass('hide')")!='Close'
+        span!=')'
+     div
+        a(href="#" onclick="javascript:$('.results').removeClass('hide')")!='Administer Results ('
+        a(href="#" style="font-weight:bold" onclick="javascript:$('.results').addClass('hide')")!='Close'
+        span!=')'
+        
+  #matches
+       - now = (new Date(now)).getTime()
+       - count = 0
+       - predicted = false
+       - predictedteam = ''
+       - scoretyp = ''
+       - scorehemma = ''
+       - background = 'background:rgba(0, 0, 0, 0);'
+       - flagtyp = ''
+       - flaghemma = ''
+       - hide = 'hide'
+     if advancedsuccess
+         - hide = ''
+     div(id="ctl00_Div2" class="winners "+hide style="padding:20px;margin:20px; width:auto;"+background class="container").match
+       if advancedsuccess
+         div(class="alert alert-success")!= advancedsuccess
+       if advancederror
+         div(class="alert alert-success")!= advancederror
+       
+       div(id="wrap" style="margin:0 auto")
+         - float = "left"
+         
+         - each winner in winners
+           - background = ""
+           - if (winner.advancing != null && winner.advancing != '')
+              - background = 'border-style:solid;border-color:rgba(173, 20, 245, 0.64);'
+           div(style=background+"width:40%;margin-bottom: 20px;float:"+float)
+             p(style="padding-top:10px;")
+               span!= 'In Group '+ winner.group + ' '
+          
+               form(method="post" action="/admin" id="advancing" style="float:left;")
+                 input(name="user" type="hidden" value=''+user)
+                 input(name="phase" class="phase" id="phase" type="hidden" value=winner.phase)
+                 input(name="typorhemma" class="typorhemma" id="typorhemma" type="hidden" value=winner.position)
+                 input(name="bet" class="bet" id="bet" type="hidden" value=winner.match)
+                 div(class="form-group")
+                    select(class="form-control" name="advanced")
+                       option(value="")!='Select A Team'
+                       - if(allteams!=null)
+                          - each team in allteams
+                             - select = ''
+                             - if(team.typ == winner.advancing)
+                                option(value=team.typ selected)!=team.typ
+                             - else
+                                option(value=team.typ)!=team.typ
+                 - game = ''
+                 - if(winner.phase == 2)
+                    - game = winner.position + '' + winner.group
+                 - if(winner.phase == 3 || winner.phase == 4)
+                    - game = winner.group + ' from Match ' + winner.team 
+                 - if(winner.phase == 5)
+                    - game = 'Loser from Match ' + winner.team 
+                 - if(winner.phase == 6)
+                    - game = 'Final from Match ' + winner.team 
+                 div(class="buttons" style="float:left;")
+                    input(type="submit" class="button" value="Advancing "+game)
+                     
+               div(style="background-color:#36185F; height:3px;margin-top:50px; width:50%")!= ' '
+           - if(float == "right")
+              - float = "left"
+           - else if(float == "left")
+              - float = "right"
+     
+     
+     - hide = 'hide'
+     if successmessage
+         - hide = ''
+     div(id="ctl00_Div2" class="results "+hide style="padding:20px;margin:20px; width:auto;"+background class="container").match
+       if successmessage
+         div(class="alert alert-success")!= successmessage
+       if errormessage
+         div(class="alert alert-success")!= errormessage
+       - each match in matches
+         - matchdate = (match.datum).getTime()
+         - predicted = false
+         - scoretyp = ''
+         - scorehemma = ''
+         - background = 'background:rgba(0, 0, 0, 0);'
+         - flagtyp = "/images/" + match.typ + "_flag.png"
+         - flaghemma = "/images/" + match.hemma + "_flag.png"
+         - count++
+         - result = match.resultat
+         - if(result != null && result.length>2)
+            - results = result.split(':')
+            - scoretyp = results[0]
+            - scorehemma = results[1]
+         - if (moment(match.datum).diff(moment(now)) < 0 && scoretyp == '')
+              - background = 'background-color:rgba(173, 20, 245, 0.64);padding: 10px;'
+         - if (moment(match.datum).diff(moment(now)) < 0 && scoretyp != '')
+              - background = 'border-style:solid;border-color:rgba(173, 20, 245, 0.64); padding: 10px;'
+           
+           
+         p(style="padding-top:10px;"+background)
+            img(src=flagtyp alt="" style="border-width:0px;")
+            span!= match.typ+'  '
+            input(id="typ"+match.bet name="typ"+match.bet value=scoretyp type="text" placeholder="_" class="input-xlarge search-query score" maxlength="1" onchange="javascript:$(this).parent().parent().find('.scoretyp').val($(this).val())")
+            span!= ' v '
+            input(id="hemma"+match.bet name="hemma"+match.bet value=scorehemma type="text" placeholder="_" class="input-xlarge search-query score" maxlength="1" onchange="javascript:$(this).parent().parent().find('.scorehemma').val($(this).val())")
+            span!= '  '+match.hemma
+            img(src=flaghemma alt="" style="border-width:0px;")
+                  
+
+            form(method="post" action="/admin" id="predict" style="float:left;")
+              input(name="user" type="hidden" value=''+user)
+              input(name="position" class="position" id="position" type="hidden" value=count)
+              input(name="typ" class="typ" id="typ" type="hidden" value=match.typ)
+              input(name="hemma" class="hemma" id="hemma" type="hidden" value=match.hemma)
+              input(name="scoretyp" class="scoretyp" id="scoretyp" type="hidden" value=scoretyp)
+              input(name="scorehemma" class="scorehemma" id="scorehemma" type="hidden" value=scorehemma)
+              input(name="bet" class="bet" id="bet" type="hidden" value=match.bet)
+
+              div(class="buttons" style="float:left;")
+                 input(type="submit" class="button" value="Build Points for Match "+match.bet)
+                     
+            div(style="background-color:#36185F; height:3px;margin-top:50px")!= ' '
+
+        
+        
+        
+        

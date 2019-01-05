@@ -1,0 +1,40 @@
+extends layout
+
+block content
+
+
+  #netlighters.container
+    - fn = "#" + userid
+    a.jump(href=fn) jump to your rank
+    div(id="ctl00_Div2" class="row rank").match
+       - i = 0
+       - className = ""
+
+
+
+       div(class="table-responsive")
+          table(id="rankTbl" class="table")
+
+            tbody
+              - each netlighter in netlighters
+                - i++
+                - netlighterid = netlighter.id
+                - className = ""
+                - icon = ""
+
+                - if (i == 1)
+                    - className = "info"
+                - if (i == 2 || i == 3)
+                    - className = "active"
+                - if(netlighterid == userid)
+                    - className = "boldify you"
+                    - icon = "icon-user"
+                - participantName = netlighterid.split('@')
+                tr(class=className id=participantName[0])
+                      td= i
+                      td(class="wrapped "+icon)!= netlighter.first_name + ' ' + netlighter.name  + ' [' +participantName[0] + ']'
+                      td= netlighter.totalpoints + " pts"
+
+
+
+
