@@ -1,6 +1,6 @@
 #FROM busybox
 #CMD echo "Hello world! This is my first Docker image."
-FROM node:8
+FROM node:6
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
